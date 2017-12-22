@@ -14,27 +14,23 @@ namespace NetworkBypass
 
 		public NodeType Type = NodeType.Start;
 		
-		public NetworkNode North;
-		public NetworkNode East;
-		public NetworkNode South;
-		public NetworkNode West;
+		[HideInInspector]
+		public NetworkNode Up;
+		[HideInInspector]
+		public NetworkNode Right;
+		[HideInInspector]
+		public NetworkNode Down;
+		[HideInInspector]
+		public NetworkNode Left;
 
-		private NetworkNode lastNorth;
-		private NetworkNode lastEast;
-		private NetworkNode lastSouth;
-		private NetworkNode lastWest;
-
-		void OnValidate()
-		{
-//			if (South != null) South.North = this;
-//			if (North != null) North.South = this;
-//			if (East != null) East.West = this;
-//			if (West != null) West.East = this;
-		}
-
-		private void ValidateNode(NetworkNode from, NetworkNode to)
-		{
-			
-		}
+		[HideInInspector] public bool UpHasLine = false;
+		[HideInInspector] public bool RightHasLine = false;
+		[HideInInspector] public bool DownHasLine = false;
+		[HideInInspector] public bool LeftHasLine = false;
+		
+		public bool OutputUp;
+		public bool OutputRight;
+		public bool OutputDown;
+		public bool OutputLeft;
 	}
 }

@@ -12,26 +12,54 @@ namespace NetworkBypass
     [CustomEditor(typeof(NetworkNode), true)]
     public class NetworkNodeInspector : Editor
     {
-        private SerializedProperty northProp;
-        private SerializedProperty eastProp;
-        private SerializedProperty southProp;
-        private SerializedProperty westProp;
+        private NetworkNode self;
+        private SerializedProperty upProp;
+        private SerializedProperty rightProp;
+        private SerializedProperty downProp;
+        private SerializedProperty leftProp;
         
         private InspectorTips inspectorTips;
-        float size = 1f;
+        
+        private static Vector3 horizontalOffset = new Vector3(0.45f, 0, 0);
+        private static Vector3 verticalOffset = new Vector3(0, 0.45f, 0);
 
         void OnEnable () 
         {
-            northProp = serializedObject.FindProperty("North");
-            eastProp = serializedObject.FindProperty("East");
-            southProp = serializedObject.FindProperty("South");
-            westProp = serializedObject.FindProperty("West");
+            self = target as NetworkNode;
+            upProp = serializedObject.FindProperty("Up");
+            rightProp = serializedObject.FindProperty("Right");
+            downProp = serializedObject.FindProperty("Down");
+            leftProp = serializedObject.FindProperty("Left");
         }
 
         protected virtual void OnSceneGUI()
         {
             if (Event.current.type == EventType.Repaint)
             {
+                if (upProp.objectReferenceValue != null)
+                {
+                    var node = upProp.objectReferenceValue as NetworkNode;
+                    Handles.DrawLine(self.transform.localPosition + verticalOffset,
+						node.transform.localPosition - verticalOffset);
+				}
+				if (rightProp.objectReferenceValue != null)
+				{
+				    var node = rightProp.objectReferenceValue as NetworkNode;
+				    Handles.DrawLine(self.transform.localPosition + horizontalOffset,
+						node.transform.localPosition - horizontalOffset);
+				}
+				if (downProp.objectReferenceValue != null)
+				{
+				    var node = downProp.objectReferenceValue as NetworkNode;
+				    Handles.DrawLine(self.transform.localPosition - verticalOffset,
+						node.transform.localPosition + verticalOffset);
+				}
+				if (leftProp.objectReferenceValue != null)
+				{
+				    var node = leftProp.objectReferenceValue as NetworkNode;
+				    Handles.DrawLine(self.transform.localPosition - horizontalOffset,
+						node.transform.localPosition + horizontalOffset);
+				}
             }
         }
 
@@ -39,16 +67,16 @@ namespace NetworkBypass
         {
             NetworkNode script = target as NetworkNode;
 
-//            base.OnInspectorGUI();
-            Draw(northProp, "North");
-            Draw(eastProp, "East");
-            Draw(southProp, "South");
-            Draw(westProp, "West");
+            Draw(upProp, "Up");
+            Draw(rightProp, "Right");
+            Draw(downProp, "Down");
+            Draw(leftProp, "Left");
 
             if (inspectorTips != null)
             {
                 EditorGUILayout.HelpBox(inspectorTips.Message, inspectorTips.Type);
             }
+//            base.OnInspectorGUI();
             
             serializedObject.ApplyModifiedProperties();
         }
@@ -66,6 +94,7 @@ namespace NetworkBypass
             }
             if (currentValue == lastValue)
             {
+                if (currentValue == null) prop.objectReferenceValue = null;
                 return;
             }
             if (currentValue == null)
@@ -91,37 +120,37 @@ namespace NetworkBypass
         {
             NetworkNode node = nodeObj as NetworkNode;
             if (node == null) return;
-            if (key == "North") node.South = value as NetworkNode;
-            if (key == "South") node.North = value as NetworkNode;
-            if (key == "East") node.West = value as NetworkNode;
-            if (key == "West") node.East = value as NetworkNode;
+            if (key == "Up") node.Down = value as NetworkNode;
+            if (key == "Down") node.Up = value as NetworkNode;
+            if (key == "Right") node.Left = value as NetworkNode;
+            if (key == "Left") node.Right = value as NetworkNode;
         }
         
         private SerializedProperty FindRepeatProperty(Object currentValue, string key)
         {
-            if (key == "North")
+            if (key == "Up")
             {
-                if (eastProp.objectReferenceValue == currentValue) return eastProp;
-                if (southProp.objectReferenceValue == currentValue) return southProp;
-                if (westProp.objectReferenceValue == currentValue) return westProp;
+                if (rightProp.objectReferenceValue == currentValue) return rightProp;
+                if (downProp.objectReferenceValue == currentValue) return downProp;
+                if (leftProp.objectReferenceValue == currentValue) return leftProp;
             }
-            if (key == "East")
+            if (key == "Right")
             {
-                if (northProp.objectReferenceValue == currentValue) return northProp;
-                if (southProp.objectReferenceValue == currentValue) return southProp;
-                if (westProp.objectReferenceValue == currentValue) return westProp;
+                if (upProp.objectReferenceValue == currentValue) return upProp;
+                if (downProp.objectReferenceValue == currentValue) return downProp;
+                if (leftProp.objectReferenceValue == currentValue) return leftProp;
             }
-            if (key == "South")
+            if (key == "Down")
             {
-                if (northProp.objectReferenceValue == currentValue) return northProp;
-                if (eastProp.objectReferenceValue == currentValue) return eastProp;
-                if (westProp.objectReferenceValue == currentValue) return westProp;
+                if (upProp.objectReferenceValue == currentValue) return upProp;
+                if (rightProp.objectReferenceValue == currentValue) return rightProp;
+                if (leftProp.objectReferenceValue == currentValue) return leftProp;
             }
-            if (key == "West")
+            if (key == "Left")
             {
-                if (northProp.objectReferenceValue == currentValue) return northProp;
-                if (eastProp.objectReferenceValue == currentValue) return eastProp;
-                if (southProp.objectReferenceValue == currentValue) return southProp;
+                if (upProp.objectReferenceValue == currentValue) return upProp;
+                if (rightProp.objectReferenceValue == currentValue) return rightProp;
+                if (downProp.objectReferenceValue == currentValue) return downProp;
             }
             return null;
         }
