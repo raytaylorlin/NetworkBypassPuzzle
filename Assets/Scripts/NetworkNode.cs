@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,11 @@ namespace NetworkBypass
 {
 	public class NetworkNode : MonoBehaviour
 	{
+		public class IOFlow
+		{
+			public bool IsActive = false;
+		}
+		
 		public enum NodeType
 		{
 			Start,
@@ -28,9 +34,23 @@ namespace NetworkBypass
 		[HideInInspector] public bool DownHasLine = false;
 		[HideInInspector] public bool LeftHasLine = false;
 		
-		public bool OutputUp;
-		public bool OutputRight;
-		public bool OutputDown;
-		public bool OutputLeft;
+		public IOFlow OutputUp;
+		public IOFlow OutputRight;
+		public IOFlow OutputDown;
+		public IOFlow OutputLeft;
+		
+		public IOFlow InputUp;
+		public IOFlow InputRight;
+		public IOFlow InputDown;
+		public IOFlow InputLeft;
+
+		void Start()
+		{
+			OnInit();			
+		}
+
+		protected virtual void OnInit()
+		{
+		}
 	}
 }

@@ -23,7 +23,7 @@ namespace NetworkBypass
         private static Vector3 horizontalOffset = new Vector3(0.45f, 0, 0);
         private static Vector3 verticalOffset = new Vector3(0, 0.45f, 0);
 
-        void OnEnable () 
+        protected virtual void OnEnable () 
         {
             self = target as NetworkNode;
             upProp = serializedObject.FindProperty("Up");
@@ -34,6 +34,11 @@ namespace NetworkBypass
 
         protected virtual void OnSceneGUI()
         {
+            if (Application.isPlaying)
+            {
+                return;
+            }
+            
             if (Event.current.type == EventType.Repaint)
             {
                 if (upProp.objectReferenceValue != null)
@@ -65,20 +70,25 @@ namespace NetworkBypass
 
         public override void OnInspectorGUI()
         {
-            NetworkNode script = target as NetworkNode;
-
-            Draw(upProp, "Up");
-            Draw(rightProp, "Right");
-            Draw(downProp, "Down");
-            Draw(leftProp, "Left");
+            base.OnInspectorGUI();
+            
+            DrawFields();
 
             if (inspectorTips != null)
             {
                 EditorGUILayout.HelpBox(inspectorTips.Message, inspectorTips.Type);
             }
-//            base.OnInspectorGUI();
+
             
             serializedObject.ApplyModifiedProperties();
+        }
+
+        protected virtual void DrawFields()
+        {
+            Draw(upProp, "Up");
+            Draw(rightProp, "Right");
+            Draw(downProp, "Down");
+            Draw(leftProp, "Left");
         }
 
         private void Draw(SerializedProperty prop, string key)
@@ -155,13 +165,110 @@ namespace NetworkBypass
             return null;
         }
 
-        private void ShowTips(string message, MessageType type = MessageType.Info)
+        protected void ShowTips(string message, MessageType type = MessageType.Info)
         {
             inspectorTips = new InspectorTips
             {
                 Message = message,
                 Type = type
             };
+        }
+
+        protected void ClearTips()
+        {
+            inspectorTips = null;
+        }
+    }
+
+    [CustomEditor(typeof(StartNode), true)]
+    public class StartNodeInspector : NetworkNodeInspector
+    {
+        private SerializedProperty outputUpEnableProp;
+        private SerializedProperty outputRightEnableProp;
+        private SerializedProperty outputDownEnableProp;
+        private SerializedProperty outputLeftEnableProp;
+        
+        protected override void OnEnable () 
+        {
+            base.OnEnable();
+            outputUpEnableProp = serializedObject.FindProperty("OutputUpEnable");
+            outputRightEnableProp = serializedObject.FindProperty("OutputRightEnable");
+            outputDownEnableProp = serializedObject.FindProperty("OutputDownEnable");
+            outputLeftEnableProp = serializedObject.FindProperty("OutputLeftEnable");
+        }
+        
+        protected override void DrawFields()
+        {
+            base.DrawFields();
+            EditorGUILayout.BeginHorizontal();
+            {
+                EditorGUILayout.LabelField("Output Setting", GUILayout.MaxWidth(120f));
+                GUILayoutOption[] option = {
+                    GUILayout.MaxWidth(80f), GUILayout.MinWidth(40f)};
+                outputUpEnableProp.boolValue = EditorGUILayout.ToggleLeft("↑", outputUpEnableProp.boolValue, option);
+                outputRightEnableProp.boolValue = EditorGUILayout.ToggleLeft("→", outputRightEnableProp.boolValue, option);
+                outputDownEnableProp.boolValue = EditorGUILayout.ToggleLeft("↓", outputDownEnableProp.boolValue, option);
+                outputLeftEnableProp.boolValue = EditorGUILayout.ToggleLeft("←", outputLeftEnableProp.boolValue, option);
+            }
+            EditorGUILayout.EndHorizontal();
+            
+            if (!outputUpEnableProp.boolValue &&
+                !outputRightEnableProp.boolValue &&
+                !outputDownEnableProp.boolValue &&
+                !outputLeftEnableProp.boolValue)
+            {
+                ShowTips("开始节点需要至少一个输出", MessageType.Warning);
+            }
+            else
+            {
+                ClearTips();
+            }
+        }
+    }
+    
+    [CustomEditor(typeof(EndNode), true)]
+    public class EndNodeInspector : NetworkNodeInspector
+    {
+        private SerializedProperty inputUpLockProp;
+        private SerializedProperty inputRightLockProp;
+        private SerializedProperty inputDownLockProp;
+        private SerializedProperty inputLeftLockProp;
+        
+        protected override void OnEnable () 
+        {
+            base.OnEnable();
+            inputUpLockProp = serializedObject.FindProperty("InputUpLock");
+            inputRightLockProp = serializedObject.FindProperty("InputRightLock");
+            inputDownLockProp = serializedObject.FindProperty("InputDownLock");
+            inputLeftLockProp = serializedObject.FindProperty("InputLeftLock");
+        }
+        
+        protected override void DrawFields()
+        {
+            base.DrawFields();
+            EditorGUILayout.BeginHorizontal();
+            {
+                EditorGUILayout.LabelField("Input Lock", GUILayout.MaxWidth(120f));
+                GUILayoutOption[] option = {
+                    GUILayout.MaxWidth(80f), GUILayout.MinWidth(40f)};
+                inputUpLockProp.boolValue = EditorGUILayout.ToggleLeft("↑", inputUpLockProp.boolValue, option);
+                inputRightLockProp.boolValue = EditorGUILayout.ToggleLeft("→", inputRightLockProp.boolValue, option);
+                inputDownLockProp.boolValue = EditorGUILayout.ToggleLeft("↓", inputDownLockProp.boolValue, option);
+                inputLeftLockProp.boolValue = EditorGUILayout.ToggleLeft("←", inputLeftLockProp.boolValue, option);
+            }
+            EditorGUILayout.EndHorizontal();
+
+            if (!inputUpLockProp.boolValue &&
+                !inputRightLockProp.boolValue &&
+                !inputDownLockProp.boolValue &&
+                !inputLeftLockProp.boolValue)
+            {
+                ShowTips("结束节点需要至少一个输入锁", MessageType.Error);
+            }
+            else
+            {
+                ClearTips();
+            }
         }
     }
 }
