@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Reflection;
+using UnityEngine;
 using UnityEditor;
 
 namespace NetworkBypass
@@ -13,11 +14,7 @@ namespace NetworkBypass
     public class NetworkNodeInspector : Editor
     {
         private NetworkNode self;
-        private SerializedProperty upProp;
-        private SerializedProperty rightProp;
-        private SerializedProperty downProp;
-        private SerializedProperty leftProp;
-        
+
         private InspectorTips inspectorTips;
         
         private static Vector3 horizontalOffset = new Vector3(0.45f, 0, 0);
@@ -26,10 +23,6 @@ namespace NetworkBypass
         protected virtual void OnEnable () 
         {
             self = target as NetworkNode;
-            upProp = serializedObject.FindProperty("Up");
-            rightProp = serializedObject.FindProperty("Right");
-            downProp = serializedObject.FindProperty("Down");
-            leftProp = serializedObject.FindProperty("Left");
         }
 
         protected virtual void OnSceneGUI()
@@ -41,31 +34,26 @@ namespace NetworkBypass
             
             if (Event.current.type == EventType.Repaint)
             {
-                if (upProp.objectReferenceValue != null)
+                for (int i = 0; i < self.Neighbors.Length; i++)
                 {
-                    var node = upProp.objectReferenceValue as NetworkNode;
-                    Handles.DrawLine(self.transform.localPosition + verticalOffset,
-						node.transform.localPosition - verticalOffset);
-				}
-				if (rightProp.objectReferenceValue != null)
-				{
-				    var node = rightProp.objectReferenceValue as NetworkNode;
-				    Handles.DrawLine(self.transform.localPosition + horizontalOffset,
-						node.transform.localPosition - horizontalOffset);
-				}
-				if (downProp.objectReferenceValue != null)
-				{
-				    var node = downProp.objectReferenceValue as NetworkNode;
-				    Handles.DrawLine(self.transform.localPosition - verticalOffset,
-						node.transform.localPosition + verticalOffset);
-				}
-				if (leftProp.objectReferenceValue != null)
-				{
-				    var node = leftProp.objectReferenceValue as NetworkNode;
-				    Handles.DrawLine(self.transform.localPosition - horizontalOffset,
-						node.transform.localPosition + horizontalOffset);
-				}
+                    var neighbor = self.Neighbors[i];
+                    if (neighbor != null)
+                    {
+                        Vector3 offset = GetDrawLineOffset((NetworkNode.Direction) i);
+                        Handles.DrawLine(self.transform.localPosition + offset,
+                            neighbor.transform.localPosition - offset);
+                    }
+                }
             }
+        }
+
+        private Vector3 GetDrawLineOffset(NetworkNode.Direction direction)
+        {
+            if (direction == NetworkNode.Direction.Up) return verticalOffset;
+            if (direction == NetworkNode.Direction.Right) return horizontalOffset;
+            if (direction == NetworkNode.Direction.Down) return -verticalOffset;
+            if (direction == NetworkNode.Direction.Left) return -horizontalOffset;
+            return Vector3.zero;
         }
 
         public override void OnInspectorGUI()
@@ -85,84 +73,56 @@ namespace NetworkBypass
 
         protected virtual void DrawFields()
         {
-            Draw(upProp, "Up");
-            Draw(rightProp, "Right");
-            Draw(downProp, "Down");
-            Draw(leftProp, "Left");
+            DrawNode(NetworkNode.Direction.Up);
+            DrawNode(NetworkNode.Direction.Right);
+            DrawNode(NetworkNode.Direction.Down);
+            DrawNode(NetworkNode.Direction.Left);
         }
 
-        private void Draw(SerializedProperty prop, string key)
+        private void DrawNode(NetworkNode.Direction direction)
         {
-            Object lastValue = prop.objectReferenceValue;
-            EditorGUILayout.PropertyField(prop);
-            Object currentValue = prop.objectReferenceValue;
-            if (currentValue == target)
+            NetworkNode neighbor = self.Neighbors[(int) direction];
+            NetworkNode newValue = EditorGUILayout.ObjectField(
+                direction.ToString(), neighbor, typeof(NetworkNode), true) as NetworkNode;
+            if (newValue == self)
             {
-                prop.objectReferenceValue = lastValue;
                 ShowTips("不能将自己设为目标");
                 return;
             }
-            if (currentValue == lastValue)
+            if (newValue == neighbor)
             {
-                if (currentValue == null) prop.objectReferenceValue = null;
                 return;
             }
-            if (currentValue == null)
+            if (newValue == null)
             {
-                SetOppositeNode(lastValue, key, null);
-                Debug.Log(string.Format("Set {0} to null", key));
+                neighbor.SetNode(NetworkNode.GetOppositeDirection(direction), null);
+                self.SetNode(direction, null);
+                Debug.Log(string.Format("Set {0} to null", direction));
             }
-            else 
+            else
             {
-                SerializedProperty sp = FindRepeatProperty(currentValue, key);
-                if (sp != null)
+                NetworkNode.Direction repeatDirection = FindRepeatNodeDirection(newValue, direction);
+                if (repeatDirection != NetworkNode.Direction.Unknown)
                 {
-                    ShowTips(string.Format("节点{0}不能应用在多个出口，已调整到新的出口", sp.objectReferenceValue.name));
-                    SetOppositeNode(sp.objectReferenceValue, sp.displayName, null);
-                    sp.objectReferenceValue = null;
+                    ShowTips(string.Format("节点{0}不能应用在多个出口，已调整到新的出口", newValue.name));
+                    self.GetNode(repeatDirection).SetNode(NetworkNode.GetOppositeDirection(repeatDirection), null);
+                    self.SetNode(repeatDirection, null);
                 }
-                SetOppositeNode(currentValue, key, target);
-                Debug.Log(string.Format("Set {0} to {1}", key, currentValue));
+                newValue.SetNode(NetworkNode.GetOppositeDirection(direction), self);
+                self.SetNode(direction, newValue);
+                Debug.Log(string.Format("Set {0} to {1}", direction, newValue));
             }
         }
 
-        private void SetOppositeNode(Object nodeObj, string key, Object value)
+        private NetworkNode.Direction FindRepeatNodeDirection(NetworkNode newValue, NetworkNode.Direction direction)
         {
-            NetworkNode node = nodeObj as NetworkNode;
-            if (node == null) return;
-            if (key == "Up") node.Down = value as NetworkNode;
-            if (key == "Down") node.Up = value as NetworkNode;
-            if (key == "Right") node.Left = value as NetworkNode;
-            if (key == "Left") node.Right = value as NetworkNode;
-        }
-        
-        private SerializedProperty FindRepeatProperty(Object currentValue, string key)
-        {
-            if (key == "Up")
+            for (int i = 0; i < self.Neighbors.Length; i++)
             {
-                if (rightProp.objectReferenceValue == currentValue) return rightProp;
-                if (downProp.objectReferenceValue == currentValue) return downProp;
-                if (leftProp.objectReferenceValue == currentValue) return leftProp;
+                // 跳过自身
+                if (i == (int) direction) continue;
+                if (self.Neighbors[i] == newValue) return (NetworkNode.Direction) i;
             }
-            if (key == "Right")
-            {
-                if (upProp.objectReferenceValue == currentValue) return upProp;
-                if (downProp.objectReferenceValue == currentValue) return downProp;
-                if (leftProp.objectReferenceValue == currentValue) return leftProp;
-            }
-            if (key == "Down")
-            {
-                if (upProp.objectReferenceValue == currentValue) return upProp;
-                if (rightProp.objectReferenceValue == currentValue) return rightProp;
-                if (leftProp.objectReferenceValue == currentValue) return leftProp;
-            }
-            if (key == "Left")
-            {
-                if (upProp.objectReferenceValue == currentValue) return upProp;
-                if (rightProp.objectReferenceValue == currentValue) return rightProp;
-                if (downProp.objectReferenceValue == currentValue) return downProp;
-            }
-            return null;
+            return NetworkNode.Direction.Unknown;
         }
 
         protected void ShowTips(string message, MessageType type = MessageType.Info)

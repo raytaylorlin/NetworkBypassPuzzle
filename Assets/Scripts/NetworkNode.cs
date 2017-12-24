@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace NetworkBypass
 {
+	[DisallowMultipleComponent]
 	public class NetworkNode : MonoBehaviour
 	{
 		public class IOFlow
@@ -24,10 +25,13 @@ namespace NetworkBypass
 			Up = 0,
 			Right = 1,
 			Down = 2,
-			Left = 3
+			Left = 3,
+			Unknown = -1
 		}
 
 		public NodeType Type = NodeType.Start;
+
+		[HideInInspector] public NetworkNode[] Neighbors = {null, null, null, null};
 
 		[HideInInspector]
 		public NetworkNode Up;
@@ -85,6 +89,30 @@ namespace NetworkBypass
 		public virtual void OnInputActivate(Direction from)
 		{
 
+		}
+
+		public NetworkNode GetNode(Direction direction)
+		{
+			return Neighbors[(int) direction];
+		}
+
+		public void SetNode(Direction direction, NetworkNode value)
+		{
+			Neighbors[(int) direction] = value;
+		}
+
+		public static Direction GetOppositeDirection(Direction direction)
+		{
+			return (Direction) (((int) direction + 2) % 4);
+		}
+
+		public NetworkNode GetOpposite(Direction direction)
+		{
+			if (direction == Direction.Up) return Neighbors[(int) Direction.Down];
+			if (direction == Direction.Right) return Neighbors[(int) Direction.Left];
+			if (direction == Direction.Down) return Neighbors[(int) Direction.Up];
+			if (direction == Direction.Left) return Neighbors[(int) Direction.Right];
+			return null;
 		}
 	}
 }
