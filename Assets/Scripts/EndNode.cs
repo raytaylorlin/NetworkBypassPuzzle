@@ -22,5 +22,13 @@ namespace NetworkBypass
 //			InputDown = new IOFlow();
 //			InputLeft = new IOFlow();
 		}
+
+		public override void OnInputActivate(Direction from)
+		{
+			if (from == Direction.Up && InputUpLock)
+			{
+				Debug.Log("Up unlocked");
+			}
+		}
 	}
 }

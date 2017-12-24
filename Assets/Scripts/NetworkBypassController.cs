@@ -10,6 +10,10 @@ namespace NetworkBypass
 		public Transform NetworkFlows;
 		public GameObject NetworkFlowPrefab;
 		public List<NetworkNode> ActiveList;
+
+		private StartNode startNode;
+		private Dictionary<NetworkNode, bool> visited = new Dictionary<NetworkNode, bool>();
+		private Queue<NetworkNode> queue = new Queue<NetworkNode>();
 		
 		private static Vector3 horizontalOffset = new Vector3(0.45f, 0, 0);
 		private static Vector3 verticalOffset = new Vector3(0, 0.45f, 0);
@@ -20,35 +24,65 @@ namespace NetworkBypass
 			CreateLines();
 			foreach (var node in ActiveList)
 			{
+				if (node is StartNode && startNode == null)
+				{
+					startNode = node as StartNode;
+				}
 				Debug.Log(node);
 			}
+			StartCoroutine(UpdateNetwork());
 		}
 
 		void Update()
 		{
-//			foreach (var node in activeList)
-//			{
-//				if (node.Up != null)
-//				{
-//					DrawLine(node.transform.localPosition + verticalOffset,
-//						node.Up.transform.localPosition - verticalOffset);
-//				}
-//				if (node.Right != null)
-//				{
-//					DrawLine(node.transform.localPosition + horizontalOffset,
-//						node.Right.transform.localPosition - horizontalOffset);
-//				}
-//				if (node.Down != null)
-//				{
-//					DrawLine(node.transform.localPosition - verticalOffset,
-//						node.Down.transform.localPosition + verticalOffset);
-//				}
-//				if (node.Left != null)
-//				{
-//					DrawLine(node.transform.localPosition - horizontalOffset,
-//						node.Left.transform.localPosition + horizontalOffset);
-//				}
-//			}
+
+		}
+
+		private IEnumerator UpdateNetwork()
+		{
+			if (startNode == null) yield break;
+
+			while (true)
+			{
+				visited.Clear();
+				VisitNode(startNode);
+				while (queue.Count > 0)
+				{
+					NetworkNode node = queue.Dequeue();
+					if (node.IsOutputUpFlowActive && !visited.ContainsKey(node.Up))
+					{
+						node.OutputUp.networkFlow.Activate();
+						node.Up.OnInputActivate(NetworkNode.Direction.Down);
+						VisitNode(node.Up);
+					}
+					if (node.IsOutputRightFlowActive && !visited.ContainsKey(node.Right))
+					{
+						node.OutputRight.networkFlow.Activate();
+						node.Right.OnInputActivate(NetworkNode.Direction.Left);
+						VisitNode(node.Right);
+					}
+					if (node.IsOutputDownFlowActive && !visited.ContainsKey(node.Down))
+					{
+						node.OutputDown.networkFlow.Activate();
+						node.Down.OnInputActivate(NetworkNode.Direction.Up);
+						VisitNode(node.Down);
+					}
+					if (node.IsOutputLeftFlowActive && !visited.ContainsKey(node.Left))
+					{
+						node.OutputLeft.networkFlow.Activate();
+						node.Left.OnInputActivate(NetworkNode.Direction.Right);
+						VisitNode(node.Left);
+					}
+				}
+
+				yield return new WaitForSeconds(1f);
+			}
+		}
+
+		private void VisitNode(NetworkNode node)
+		{
+			visited.Add(node, true);
+			queue.Enqueue(node);
 		}
 
 		private void CreateLines()
@@ -94,30 +128,44 @@ namespace NetworkBypass
 				flowGo = CreateLine(first.transform.localPosition + verticalOffset,
 					               second.transform.localPosition - verticalOffset);
 				first.UpHasLine = second.DownHasLine = true;
+
+				NetworkFlow flow = flowGo.GetComponent<NetworkFlow>();
+				flow.FirstNode = first;
+				flow.SecondNode = second;
+				first.OutputUp.networkFlow = flow;
 			}
 			else if (key == "Right")
 			{
 				flowGo = CreateLine(first.transform.localPosition + horizontalOffset,
 					               second.transform.localPosition - horizontalOffset);
 				first.RightHasLine = second.LeftHasLine = true;
+
+				NetworkFlow flow = flowGo.GetComponent<NetworkFlow>();
+				flow.FirstNode = first;
+				flow.SecondNode = second;
+				first.OutputRight.networkFlow = flow;
 			}
 			else if (key == "Down")
 			{
 				flowGo = CreateLine(first.transform.localPosition - verticalOffset,
 								   second.transform.localPosition + verticalOffset);
-				first.UpHasLine = second.UpHasLine = true;
+				first.DownHasLine = second.UpHasLine = true;
+
+				NetworkFlow flow = flowGo.GetComponent<NetworkFlow>();
+				flow.FirstNode = first;
+				flow.SecondNode = second;
+				first.OutputDown.networkFlow = flow;
 			}
 			else if (key == "Left")
 			{
 				flowGo = CreateLine(first.transform.localPosition - horizontalOffset,
 								   second.transform.localPosition + horizontalOffset);
-				first.DownHasLine = second.RightHasLine = true;
-			}
-			if (flowGo != null)
-			{
+				first.LeftHasLine = second.RightHasLine = true;
+
 				NetworkFlow flow = flowGo.GetComponent<NetworkFlow>();
 				flow.FirstNode = first;
 				flow.SecondNode = second;
+				first.OutputLeft.networkFlow = flow;
 			}
 		}
 
