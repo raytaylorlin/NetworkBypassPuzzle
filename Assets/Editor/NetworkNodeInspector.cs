@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace NetworkBypass
+namespace NetworkBypass.Editor
 {
     class InspectorTips
     {
@@ -11,10 +11,12 @@ namespace NetworkBypass
     }
     
     [CustomEditor(typeof(NetworkNode), true)]
-    public class NetworkNodeInspector : Editor
+    public class NetworkNodeInspector : UnityEditor.Editor
     {
         protected NetworkNode self;
         private InspectorTips inspectorTips;
+        
+        protected static string[] directionString = {"↑", "→", "↓", "←"};
 
         protected void OnEnable()
         {
@@ -46,14 +48,30 @@ namespace NetworkBypass
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
-            
-            DrawFields();
+
+            if (EditorTools.DrawHeader("Designer"))
+            {
+                EditorTools.BeginContents();
+                {
+                    DrawFields();
+                }
+                EditorTools.EndContents();
+            }
             if (inspectorTips != null)
             {
                 EditorGUILayout.HelpBox(inspectorTips.Message, inspectorTips.Type);
             }
 
             serializedObject.ApplyModifiedProperties();
+            
+            if (EditorTools.DrawHeader("Debug"))
+            {
+                EditorTools.BeginContents();
+                {
+                    DrawDebugFields();
+                }
+                EditorTools.EndContents();
+            }
         }
 
         protected virtual void DrawFields()
@@ -123,13 +141,31 @@ namespace NetworkBypass
         {
             inspectorTips = null;
         }
+
+        protected virtual void DrawDebugFields()
+        {
+            DrawIOFields(self.Inputs, "Input");
+            DrawIOFields(self.Outputs, "Output");
+        }
+
+        private void DrawIOFields(bool[] flags, string title)
+        {
+            EditorGUILayout.BeginHorizontal();
+            {
+                EditorGUILayout.LabelField(title, GUILayout.MaxWidth(120f));
+                GUILayoutOption[] option = {GUILayout.MaxWidth(80f), GUILayout.MinWidth(40f)};
+                for (int i = 0; i < flags.Length; i++)
+                {
+                    EditorGUILayout.ToggleLeft(directionString[i], flags[i], option);
+                }
+            }
+            EditorGUILayout.EndHorizontal();
+        }
     }
 
     [CustomEditor(typeof(StartNode), true)]
     public class StartNodeInspector : NetworkNodeInspector
     {
-        private static string[] directionString = {"↑", "→", "↓", "←"};
-        
         protected override void DrawFields()
         {
             StartNode node = target as StartNode;
@@ -165,8 +201,6 @@ namespace NetworkBypass
     [CustomEditor(typeof(EndNode), true)]
     public class EndNodeInspector : NetworkNodeInspector
     {
-        private static string[] directionString = {"↑", "→", "↓", "←"};
-        
         protected override void DrawFields()
         {
             EndNode node = target as EndNode;
