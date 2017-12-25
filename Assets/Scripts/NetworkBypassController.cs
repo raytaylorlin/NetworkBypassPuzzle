@@ -17,13 +17,20 @@ namespace NetworkBypass
         private Queue<NetworkNode> queue = new Queue<NetworkNode>();
         private string debugGUIText;
         
+        public static Color ActiveColor = new Color(0f, 191 / 255f, 1f);
+        public static Color DeactiveColor = Color.white;
         private static Rect debugRect = new Rect(0, 0, 300, 400);
 
-        void Start()
+        void Awake()
         {
             CreateFlows();
             InitNodes();
-            StartCoroutine(UpdateNetwork());
+        }
+        
+        void Start()
+        {
+            StartCoroutine(UpdateNetwork());   
+//            TraverseNetwork();
         }
 
         private void RegisterEvents(NetworkNode node)
@@ -94,12 +101,8 @@ namespace NetworkBypass
         private IEnumerator UpdateNetwork()
         {
             if (startNode == null) yield break;
-
-            while (true)
-            {
-                yield return new WaitForSeconds(1f);
-                TraverseNetwork();
-            }
+            yield return null;
+            TraverseNetwork();
         }
 
         private void TraverseNetwork()

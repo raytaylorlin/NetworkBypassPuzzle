@@ -22,6 +22,8 @@ namespace NetworkBypass
         [HideInInspector] public NetworkFlow[] Flows = {null, null, null, null};
         [HideInInspector] public bool[] Outputs = {false, false, false, false};
         [HideInInspector] public bool[] Inputs = {false, false, false, false};
+        
+        public SpriteRenderer Sprite;
 
         public const int NeighborNum = 4;
         
@@ -63,7 +65,7 @@ namespace NetworkBypass
 
         protected virtual void Init()
         {
-            
+
         }
 
         public virtual void ActivateInput(Direction from)

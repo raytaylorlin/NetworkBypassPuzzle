@@ -47,12 +47,12 @@ namespace NetworkBypass.Editor
 
         public override void OnInspectorGUI()
         {
-            base.OnInspectorGUI();
-
             if (EditorTools.DrawHeader("Designer"))
             {
                 EditorTools.BeginContents();
                 {
+                    base.OnInspectorGUI();
+                    GUILayout.Space(10f);
                     DrawFields();
                 }
                 EditorTools.EndContents();

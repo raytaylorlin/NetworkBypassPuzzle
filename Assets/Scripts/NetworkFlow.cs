@@ -7,8 +7,6 @@ namespace NetworkBypass
 {
     public class NetworkFlow : MonoBehaviour
     {
-        public Color ActivateColor;
-        public Color DeactivateColor;
         [ReadOnly] public NetworkNode FirstNode;
         [ReadOnly] public NetworkNode SecondNode;
         [ReadOnly] public bool IsActive;
@@ -23,13 +21,13 @@ namespace NetworkBypass
         public void Activate()
         {
             IsActive = true;
-            lineRenderer.startColor = lineRenderer.endColor = ActivateColor;
+            lineRenderer.startColor = lineRenderer.endColor = NetworkBypassController.ActiveColor;
         }
     
         public void Deactivate()
         {
             IsActive = false;
-            lineRenderer.startColor = lineRenderer.endColor = DeactivateColor;
+            lineRenderer.startColor = lineRenderer.endColor = NetworkBypassController.DeactiveColor;
         }
     }   
 }
