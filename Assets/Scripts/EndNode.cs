@@ -4,31 +4,24 @@ using UnityEngine;
 
 namespace NetworkBypass
 {
-	public class EndNode : NetworkNode
-	{
-		[HideInInspector] public bool InputUpLock;
-		[HideInInspector] public bool InputRightLock;
-		[HideInInspector] public bool InputDownLock;
-		[HideInInspector] public bool InputLeftLock;
+    public class EndNode : NetworkNode
+    {
+        public bool[] InputLockSetting = {false, false, false, false};
 
-		protected override void OnInit()
-		{
-//			if (OutputUpEnable) OutputUp = new IOFlow();
-//			if (OutputRightEnable) OutputRight = new IOFlow();
-//			if (OutputDownEnable) OutputDown = new IOFlow();
-//			if (OutputLeftEnable) OutputLeft = new IOFlow();
-//			InputUp = new IOFlow();
-//			InputRight = new IOFlow();
-//			InputDown = new IOFlow();
-//			InputLeft = new IOFlow();
-		}
+        protected override void OnInit()
+        {
+        }
 
-		public override void OnInputActivate(Direction from)
-		{
-			if (from == Direction.Up && InputUpLock)
-			{
-				Debug.Log("Up unlocked");
-			}
-		}
-	}
+        public override void OnInputActivate(Direction from)
+        {
+            for (int i = 0; i < NeighborNum; i++)
+            {
+                if ((int) from == i && InputLockSetting[i])
+                {
+                    Debug.Log(string.Format("{0} unlocked", from));
+                    Inputs[i] = true;
+                }
+            }
+        }
+    }
 }

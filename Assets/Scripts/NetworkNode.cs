@@ -1,118 +1,101 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace NetworkBypass
 {
-	[DisallowMultipleComponent]
-	public class NetworkNode : MonoBehaviour
-	{
-		public class IOFlow
-		{
-			public bool IsActive = false;
-			public NetworkFlow networkFlow;
-		}
+    [DisallowMultipleComponent]
+    public class NetworkNode : MonoBehaviour
+    {
+        public enum Direction
+        {
+            Up = 0,
+            Right = 1,
+            Down = 2,
+            Left = 3,
+            Unknown = -1
+        }
 
-		public enum NodeType
-		{
-			Start,
-			End
-		}
+        [HideInInspector] public NetworkNode[] Neighbors = {null, null, null, null};
+        [HideInInspector] public NetworkFlow[] Flows = {null, null, null, null};
+        [HideInInspector] public bool[] Outputs = {false, false, false, false};
+        [HideInInspector] public bool[] Inputs = {false, false, false, false};
 
-		public enum Direction
-		{
-			Up = 0,
-			Right = 1,
-			Down = 2,
-			Left = 3,
-			Unknown = -1
-		}
+        public const int NeighborNum = 4;
+        
+        private static Vector3 horizontalOffset = new Vector3(0.45f, 0, 0);
+        private static Vector3 verticalOffset = new Vector3(0, 0.45f, 0);
 
-		public NodeType Type = NodeType.Start;
+        void Start()
+        {
+            OnInit();			
+        }
 
-		[HideInInspector] public NetworkNode[] Neighbors = {null, null, null, null};
+        protected virtual void OnInit()
+        {
+        }
 
-		[HideInInspector]
-		public NetworkNode Up;
-		[HideInInspector]
-		public NetworkNode Right;
-		[HideInInspector]
-		public NetworkNode Down;
-		[HideInInspector]
-		public NetworkNode Left;
+        public virtual void OnInputActivate(Direction from)
+        {
+            Inputs[(int) from] = true;
+        }
 
-		[HideInInspector] public bool UpHasLine = false;
-		[HideInInspector] public bool RightHasLine = false;
-		[HideInInspector] public bool DownHasLine = false;
-		[HideInInspector] public bool LeftHasLine = false;
+        public NetworkNode GetNeighbor(Direction direction)
+        {
+            return Neighbors[(int) direction];
+        }
+        
+        public NetworkNode GetNeighbor(int index)
+        {
+            if (index >= 0 && index < NeighborNum) 
+                return Neighbors[index];
+            return null;
+        }
 
-		public IOFlow OutputUp;
-		public IOFlow OutputRight;
-		public IOFlow OutputDown;
-		public IOFlow OutputLeft;
+        public void SetNeighbor(Direction direction, NetworkNode value)
+        {
+            Neighbors[(int) direction] = value;
+        }
+        
+        public NetworkFlow GetFlow(Direction direction)
+        {
+            return Flows[(int) direction];
+        }
+        
+        public NetworkFlow GetFlow(int index)
+        {
+            if (index >= 0 && index < NeighborNum) 
+                return Flows[index];
+            return null;
+        }
+        
+        public void SetFlow(Direction direction, NetworkFlow value)
+        {
+            Flows[(int) direction] = value;
+        }
 
-		public IOFlow InputUp;
-		public IOFlow InputRight;
-		public IOFlow InputDown;
-		public IOFlow InputLeft;
+        public bool IsReachableTo(Direction direction)
+        {
+            int i = (int) direction;
+            return Outputs[i] && GetNeighbor(i) != null;
+//			return OutputUp != null && OutputUp.IsActive && Up != null;
+        }
 
-		public bool IsOutputUpFlowActive
-		{
-			get { return OutputUp != null && OutputUp.IsActive && Up != null; }
-		}
-
-		public bool IsOutputRightFlowActive
-		{
-			get { return OutputRight != null && OutputRight.IsActive && Right != null; }
-		}
-
-		public bool IsOutputDownFlowActive
-		{
-			get { return OutputDown != null && OutputDown.IsActive && Down != null; }
-		}
-
-		public bool IsOutputLeftFlowActive
-		{
-			get { return OutputLeft != null && OutputLeft.IsActive && Left != null; }
-		}
-
-		void Start()
-		{
-			OnInit();			
-		}
-
-		protected virtual void OnInit()
-		{
-		}
-
-		public virtual void OnInputActivate(Direction from)
-		{
-
-		}
-
-		public NetworkNode GetNode(Direction direction)
-		{
-			return Neighbors[(int) direction];
-		}
-
-		public void SetNode(Direction direction, NetworkNode value)
-		{
-			Neighbors[(int) direction] = value;
-		}
-
-		public static Direction GetOppositeDirection(Direction direction)
-		{
-			return (Direction) (((int) direction + 2) % 4);
-		}
-
-		public NetworkNode GetOpposite(Direction direction)
-		{
-			if (direction == Direction.Up) return Neighbors[(int) Direction.Down];
-			if (direction == Direction.Right) return Neighbors[(int) Direction.Left];
-			if (direction == Direction.Down) return Neighbors[(int) Direction.Up];
-			if (direction == Direction.Left) return Neighbors[(int) Direction.Right];
-			return null;
-		}
-	}
+        public static Direction GetOppositeDirection(Direction direction)
+        {
+            return (Direction) (((int) direction + 2) % 4);
+        }
+        
+        public static Direction GetOppositeDirection(int index)
+        {
+            return (Direction) ((index + 2) % 4);
+        }
+        
+        public static Vector3 GetDrawLineOffset(Direction direction)
+        {
+            if (direction == Direction.Up) return verticalOffset;
+            if (direction == Direction.Right) return horizontalOffset;
+            if (direction == Direction.Down) return -verticalOffset;
+            if (direction == Direction.Left) return -horizontalOffset;
+            return Vector3.zero;
+        }
+    }
 }
