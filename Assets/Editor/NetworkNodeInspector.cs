@@ -100,7 +100,9 @@ namespace NetworkBypass.Editor
             {
                 neighbor.SetNeighbor(NetworkNode.GetOppositeDirection(direction), null);
                 self.SetNeighbor(direction, null);
-                Debug.Log(string.Format("Set {0} to null", direction));
+                
+                EditorUtility.SetDirty(neighbor);
+                EditorUtility.SetDirty(self);
             }
             else
             {
@@ -111,10 +113,20 @@ namespace NetworkBypass.Editor
                     self.GetNeighbor(repeatDirection).SetNeighbor(NetworkNode.GetOppositeDirection(repeatDirection), null);
                     self.SetNeighbor(repeatDirection, null);
                 }
+                // 如果原来有值，又换了新值，应该清除原来的引用
+                if (neighbor != null)
+                {
+                    neighbor.SetNeighbor(NetworkNode.GetOppositeDirection(direction), null);
+                    EditorUtility.SetDirty(neighbor);
+                }
+
                 newValue.SetNeighbor(NetworkNode.GetOppositeDirection(direction), self);
                 self.SetNeighbor(direction, newValue);
                 Debug.Log(string.Format("Set {0} to {1}", direction, newValue));
+                EditorUtility.SetDirty(newValue);
+                EditorUtility.SetDirty(self);
             }
+            
         }
 
         private NetworkNode.Direction FindRepeatNodeDirection(NetworkNode newValue, NetworkNode.Direction direction)

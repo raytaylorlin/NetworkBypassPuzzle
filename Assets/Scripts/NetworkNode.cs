@@ -97,6 +97,11 @@ namespace NetworkBypass
         public void SetNeighbor(Direction direction, NetworkNode value)
         {
             Neighbors[(int) direction] = value;
+            Debug.Log(string.Format("{0}: {1}, {2}, {3}, {4}", gameObject.name, 
+                Neighbors[0] != null ? Neighbors[0].ToString() : "null", 
+                Neighbors[1] != null ? Neighbors[1].ToString() : "null", 
+                Neighbors[2] != null ? Neighbors[2].ToString() : "null", 
+                Neighbors[3] != null ? Neighbors[3].ToString() : "null"));
         }
         
         public NetworkFlow GetFlow(Direction direction)
