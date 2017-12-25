@@ -6,13 +6,14 @@ namespace NetworkBypass
 {
     public class EndNode : NetworkNode
     {
-        public bool[] InputLockSetting = {false, false, false, false};
+        [HideInInspector] public bool[] InputLockSetting = {false, false, false, false};
 
-        protected override void OnInit()
+        protected override void Init()
         {
+            base.Init();
         }
 
-        public override void OnInputActivate(Direction from)
+        public override void ActivateInput(Direction from)
         {
             for (int i = 0; i < NeighborNum; i++)
             {

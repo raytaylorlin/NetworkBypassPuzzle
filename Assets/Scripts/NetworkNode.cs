@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace NetworkBypass
 {
@@ -14,6 +15,9 @@ namespace NetworkBypass
             Unknown = -1
         }
 
+        public event EventHandler OnFocus;
+        public event EventHandler OnClick;
+
         [HideInInspector] public NetworkNode[] Neighbors = {null, null, null, null};
         [HideInInspector] public NetworkFlow[] Flows = {null, null, null, null};
         [HideInInspector] public bool[] Outputs = {false, false, false, false};
@@ -24,19 +28,57 @@ namespace NetworkBypass
         private static Vector3 horizontalOffset = new Vector3(0.45f, 0, 0);
         private static Vector3 verticalOffset = new Vector3(0, 0.45f, 0);
 
+        #region Unity方法
+        
         void Start()
         {
-            OnInit();			
+            CreateCollider();
+            Init();	
         }
-
-        protected virtual void OnInit()
+        
+        private void CreateCollider()
         {
+            SphereCollider collider = gameObject.AddComponent<SphereCollider>();
+            collider.radius = 0.5f;
+        }
+        
+        void OnMouseDown()
+        {
+            OnClick(this, null);
         }
 
-        public virtual void OnInputActivate(Direction from)
+        void OnMouseEnter()
+        {
+            OnFocus(this, null);
+        }
+
+        void OnMouseExit()
+        {
+            OnFocus(null, null);
+        }
+        
+        #endregion
+        
+        #region 虚方法
+
+        protected virtual void Init()
+        {
+            
+        }
+
+        public virtual void ActivateInput(Direction from)
         {
             Inputs[(int) from] = true;
         }
+
+        public virtual void Execute()
+        {
+            
+        }
+        
+        #endregion
+        
+        #region 工具方法
 
         public NetworkNode GetNeighbor(Direction direction)
         {
@@ -97,5 +139,7 @@ namespace NetworkBypass
             if (direction == Direction.Left) return -horizontalOffset;
             return Vector3.zero;
         }
+        
+        #endregion
     }
 }

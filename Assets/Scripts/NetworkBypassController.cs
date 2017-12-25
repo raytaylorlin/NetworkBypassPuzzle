@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,68 +15,32 @@ namespace NetworkBypass
         private StartNode startNode;
         private Dictionary<NetworkNode, bool> visited = new Dictionary<NetworkNode, bool>();
         private Queue<NetworkNode> queue = new Queue<NetworkNode>();
+        private string debugGUIText;
+        
+        private static Rect debugRect = new Rect(0, 0, 300, 400);
 
         void Start()
         {
-            ActiveList = new List<NetworkNode>(GetComponentsInChildren<NetworkNode>());
-            CreateLines();
-            foreach (var node in ActiveList)
-            {
-                if (node is StartNode && startNode == null)
-                {
-                    startNode = node as StartNode;
-                }
-                Debug.Log(node);
-            }
+            CreateFlows();
+            InitNodes();
             StartCoroutine(UpdateNetwork());
         }
 
-        void Update()
+        private void RegisterEvents(NetworkNode node)
         {
-
+            node.OnClick += OnNodeClick;
+            node.OnFocus += (go, e) => { debugGUIText = go != null ? 
+                "Hover " + go : string.Empty; };
         }
 
-        private IEnumerator UpdateNetwork()
+        void OnGUI()
         {
-            if (startNode == null) yield break;
-
-            while (true)
-            {
-                yield return new WaitForSeconds(1f);
-                TraverseNetwork();
-            }
+            GUI.Label(debugRect, debugGUIText);
         }
 
-        private void TraverseNetwork()
+        private void CreateFlows()
         {
-            visited.Clear();
-            // 广度优先遍历
-            VisitNode(startNode);
-            while (queue.Count > 0)
-            {
-                NetworkNode node = queue.Dequeue();
-                for (int i = 0; i < NetworkNode.NeighborNum; i++)
-                {
-                    var direction = (NetworkNode.Direction) i;
-                    var neighbor = node.GetNeighbor(direction);
-                    if (node.IsReachableTo(direction) && !visited.ContainsKey(neighbor))
-                    {
-                        node.GetFlow(direction).Activate();
-                        neighbor.OnInputActivate(NetworkNode.GetOppositeDirection(direction));
-                        VisitNode(neighbor);
-                    }
-                }
-            }
-        }
-
-        private void VisitNode(NetworkNode node)
-        {
-            visited.Add(node, true);
-            queue.Enqueue(node);
-        }
-
-        private void CreateLines()
-        {
+            ActiveList = new List<NetworkNode>(GetComponentsInChildren<NetworkNode>());
             foreach (var node in ActiveList)
             {
                 for (int i = 0; i < NetworkNode.NeighborNum; i++)
@@ -112,6 +77,64 @@ namespace NetworkBypass
             lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
             lineRenderer.SetPositions(new Vector3[] {from, to});
             return flowGo.GetComponent<NetworkFlow>();
+        }
+        
+        private void InitNodes()
+        {
+            foreach (var node in ActiveList)
+            {
+                if (node is StartNode && startNode == null)
+                {
+                    startNode = node as StartNode;
+                }
+                RegisterEvents(node);
+            }
+        }
+        
+        private IEnumerator UpdateNetwork()
+        {
+            if (startNode == null) yield break;
+
+            while (true)
+            {
+                yield return new WaitForSeconds(1f);
+                TraverseNetwork();
+            }
+        }
+
+        private void TraverseNetwork()
+        {
+            visited.Clear();
+            // 广度优先遍历
+            VisitNode(startNode);
+            while (queue.Count > 0)
+            {
+                NetworkNode node = queue.Dequeue();
+                for (int i = 0; i < NetworkNode.NeighborNum; i++)
+                {
+                    var direction = (NetworkNode.Direction) i;
+                    var neighbor = node.GetNeighbor(direction);
+                    if (node.IsReachableTo(direction) && !visited.ContainsKey(neighbor))
+                    {
+                        node.GetFlow(direction).Activate();
+                        neighbor.ActivateInput(NetworkNode.GetOppositeDirection(direction));
+                        VisitNode(neighbor);
+                    }
+                }
+            }
+        }
+
+        private void VisitNode(NetworkNode node)
+        {
+            visited.Add(node, true);
+            queue.Enqueue(node);
+        }
+
+        private void OnNodeClick(object obj, EventArgs e)
+        {
+            NetworkNode node = obj as NetworkNode;
+            debugGUIText = "Click " + node.name;
+            node.Execute();
         }
     }
 }

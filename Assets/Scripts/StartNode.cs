@@ -6,10 +6,11 @@ namespace NetworkBypass
 {
     public class StartNode : NetworkNode
     {
-        public bool[] OutputSetting = {false, false, false, false};
+        [HideInInspector] public bool[] OutputSetting = {false, false, false, false};
 
-        protected override void OnInit()
+        protected override void Init()
         {
+            base.Init();
             for (int i = 0; i < NeighborNum; i++)
             {
                 Outputs[i] = OutputSetting[i];
