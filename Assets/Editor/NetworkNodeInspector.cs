@@ -54,6 +54,7 @@ namespace NetworkBypass.Editor
                     base.OnInspectorGUI();
                     GUILayout.Space(10f);
                     DrawFields();
+                    EditorUtility.SetDirty(self);
                 }
                 EditorTools.EndContents();
             }
