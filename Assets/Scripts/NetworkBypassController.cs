@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace NetworkBypass
 {
@@ -38,6 +37,7 @@ namespace NetworkBypass
             node.OnClick += OnNodeClick;
             node.OnFocus += (go, e) => { debugGUIText = go != null ? 
                 "Hover " + go : string.Empty; };
+            node.OnDataChanged += OnNodeDataChanged;
         }
 
         void OnGUI()
@@ -138,6 +138,11 @@ namespace NetworkBypass
             NetworkNode node = obj as NetworkNode;
             debugGUIText = "Click " + node.name;
             node.Execute();
+        }
+
+        private void OnNodeDataChanged(object obj, EventArgs e)
+        {
+            TraverseNetwork();
         }
     }
 }

@@ -17,6 +17,7 @@ namespace NetworkBypass
 
         public event EventHandler OnFocus;
         public event EventHandler OnClick;
+        public event EventHandler OnDataChanged;
 
         [HideInInspector] public NetworkNode[] Neighbors = {null, null, null, null};
         [HideInInspector] public NetworkFlow[] Flows = {null, null, null, null};
@@ -82,6 +83,11 @@ namespace NetworkBypass
         
         #region 工具方法
 
+        protected void NotifyDataChanged()
+        {
+            OnDataChanged(this, null);
+        }
+
         public NetworkNode GetNeighbor(Direction direction)
         {
             return Neighbors[(int) direction];
@@ -126,6 +132,18 @@ namespace NetworkBypass
             int i = (int) direction;
             return Outputs[i] && GetNeighbor(i) != null;
 //			return OutputUp != null && OutputUp.IsActive && Up != null;
+        }
+
+        public bool HasInputFrom(Direction direction)
+        {
+            int i = (int) direction;
+            return Inputs[i];
+        }
+
+        public void SetOutput(Direction direction, bool flag)
+        {
+            int i = (int) direction;
+            Outputs[i] = flag;
         }
 
         public static Direction GetOppositeDirection(Direction direction)
