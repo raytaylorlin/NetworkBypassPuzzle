@@ -8,21 +8,28 @@ namespace NetworkBypass
     public class NetworkBypassController : MonoBehaviour
     {
         public Transform NetworkFlows;
+        
+        [Header("Prefabs")]
         public GameObject NetworkFlowPrefab;
-        public List<NetworkNode> ActiveList;
 
+        [Header("Settings")]
+        public Color ActiveColorSetting;
+        public Color DeactiveColorSetting;
+
+        private List<NetworkNode> activeList;
         private StartNode startNode;
         private Dictionary<NetworkNode, bool> visited = new Dictionary<NetworkNode, bool>();
         private Queue<NetworkNode> queue = new Queue<NetworkNode>();
         private bool isPuzzleComplete = false;
         private string debugGUIText;
         
-        public static Color ActiveColor = new Color(0f, 191 / 255f, 1f);
-        public static Color DeactiveColor = Color.white;
+        public static Color ActiveColor;
+        public static Color DeactiveColor;
         private static Rect debugRect = new Rect(0, 0, 300, 400);
 
         void Awake()
         {
+            InitSettings();
             CreateFlows();
             InitNodes();
         }
@@ -50,10 +57,16 @@ namespace NetworkBypass
             }
         }
 
+        private void InitSettings()
+        {
+            ActiveColor = ActiveColorSetting;
+            DeactiveColor = DeactiveColorSetting;
+        }
+
         private void CreateFlows()
         {
-            ActiveList = new List<NetworkNode>(GetComponentsInChildren<NetworkNode>());
-            foreach (var node in ActiveList)
+            activeList = new List<NetworkNode>(GetComponentsInChildren<NetworkNode>());
+            foreach (var node in activeList)
             {
                 for (int i = 0; i < NetworkNode.NeighborNum; i++)
                 {
@@ -92,7 +105,7 @@ namespace NetworkBypass
         
         private void InitNodes()
         {
-            foreach (var node in ActiveList)
+            foreach (var node in activeList)
             {
                 if (node is StartNode && startNode == null)
                 {
