@@ -78,6 +78,17 @@ namespace NetworkBypass
         {
             
         }
+
+        public virtual void SetInput(Direction from, bool isActive)
+        {
+            int i = (int) from;
+            Inputs[i] = isActive;
+        }
+
+        protected virtual void SetActive(bool isActive)
+        {
+            SetSpriteActiveColor(Sprite, isActive);
+        }
         
         #endregion
         
@@ -145,21 +156,11 @@ namespace NetworkBypass
             int i = (int) direction;
             Outputs[i] = flag;
         }
-        
-        public virtual void SetInput(Direction from, bool isActive)
-        {
-            int i = (int) from;
-            Inputs[i] = isActive;
-        }
-
-        protected void SetActive(bool isActive)
-        {
-            SetSpriteActiveColor(Sprite, isActive);
-        }
 
         protected void SetSpriteActiveColor(SpriteRenderer sprite, bool isActive)
         {
-            sprite.color = isActive ? NetworkBypassController.ActiveColor : NetworkBypassController.DeactiveColor;
+            if (sprite != null)
+                sprite.color = isActive ? NetworkBypassController.ActiveColor : NetworkBypassController.DeactiveColor;
         }
 
         public static Direction GetOppositeDirection(Direction direction)

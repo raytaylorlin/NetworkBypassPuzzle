@@ -15,6 +15,7 @@ namespace NetworkBypass
             Left = 3
         }
 
+        public SpriteRenderer BackgroundSprite;
         public ERotateState RotateState = ERotateState.Up;
 
         protected override void Init()
@@ -51,6 +52,12 @@ namespace NetworkBypass
         protected virtual void ResetRotation()
         {
             
+        }
+        
+        protected override void SetActive(bool isActive)
+        {
+            base.SetActive(isActive);
+            SetSpriteActiveColor(BackgroundSprite, isActive);
         }
     }
 }
