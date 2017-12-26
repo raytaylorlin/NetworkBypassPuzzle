@@ -22,19 +22,18 @@ namespace NetworkBypass
             }
         }
 
-        public override void ActivateInput(Direction from)
+        public override void SetInput(Direction from, bool isActive)
         {
+            base.SetInput(from, isActive);
             int i = (int) from;
             if (InputLockSetting[i])
             {
-                Debug.Log(string.Format("{0} unlocked", from));
-                Inputs[i] = true;
-                LockSprites[i].color = NetworkBypassController.ActiveColor;
+                SetSpriteActiveColor(LockSprites[i], isActive);
             }
             CheckLocks();
         }
 
-        protected void CheckLocks()
+        private void CheckLocks()
         {
             allUnlocked = true;
             for (int i = 0; i < NeighborNum; i++)
@@ -45,11 +44,7 @@ namespace NetworkBypass
                     break;
                 }
             }
-            Sprite.color = allUnlocked ? NetworkBypassController.ActiveColor : NetworkBypassController.DeactiveColor;
-            if (allUnlocked)
-            {
-                
-            }
+            SetActive(allUnlocked);
         }
 
         public override void Execute()

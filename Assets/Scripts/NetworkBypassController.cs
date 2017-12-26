@@ -117,12 +117,21 @@ namespace NetworkBypass
                 {
                     var direction = (NetworkNode.Direction) i;
                     var neighbor = node.GetNeighbor(direction);
-                    if (node.IsReachableTo(direction) && !visited.ContainsKey(neighbor))
+
+                    if (neighbor == null || visited.ContainsKey(neighbor))
+                        continue;
+                    var flow = node.GetFlow(direction);
+                    if (node.IsReachableTo(direction))
                     {
-                        node.GetFlow(direction).Activate();
-                        neighbor.ActivateInput(NetworkNode.GetOppositeDirection(direction));
-                        VisitNode(neighbor);
+                        flow.Activate();
+                        neighbor.SetInput(NetworkNode.GetOppositeDirection(direction), true);
                     }
+                    else
+                    {
+                        flow.Deactivate();
+                        neighbor.SetInput(NetworkNode.GetOppositeDirection(direction), false);
+                    }
+                    VisitNode(neighbor);
                 }
             }
         }
