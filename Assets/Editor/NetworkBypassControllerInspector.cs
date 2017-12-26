@@ -44,9 +44,10 @@ namespace NetworkBypass.Editor
 					string assetName = prefabDict[key];
 					string path = string.Format("Assets/Prefabs/{0}.prefab", assetName);
 					GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-					GameObject go = Instantiate(prefab, self.transform);
+					GameObject go = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
 					go.name = go.name.Replace("(Clone)", "");
-					PrefabUtility.ConnectGameObjectToPrefab(go, prefab);
+					go.transform.SetParent(self.transform);
+					Undo.RegisterCreatedObjectUndo(go, "Instantiate node prefab");
 				}
 			}
 			EditorGUILayout.EndHorizontal();
