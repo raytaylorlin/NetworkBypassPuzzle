@@ -14,6 +14,7 @@ namespace NetworkBypass
         private StartNode startNode;
         private Dictionary<NetworkNode, bool> visited = new Dictionary<NetworkNode, bool>();
         private Queue<NetworkNode> queue = new Queue<NetworkNode>();
+        private bool isPuzzleComplete = false;
         private string debugGUIText;
         
         public static Color ActiveColor = new Color(0f, 191 / 255f, 1f);
@@ -32,17 +33,21 @@ namespace NetworkBypass
 //            TraverseNetwork();
         }
 
-        private void RegisterEvents(NetworkNode node)
-        {
-            node.OnClick += OnNodeClick;
-            node.OnFocus += (go, e) => { debugGUIText = go != null ? 
-                "Hover " + go : string.Empty; };
-            node.OnDataChanged += OnNodeDataChanged;
-        }
-
         void OnGUI()
         {
+            var labelStyle = GUI.skin.GetStyle("Label");
+            // Debug文字
+            labelStyle.alignment = TextAnchor.UpperLeft;
+            labelStyle.fontSize = 12;
             GUI.Label(debugRect, debugGUIText);
+
+            // 结束文字
+            if (isPuzzleComplete)
+            {
+                labelStyle.alignment = TextAnchor.MiddleCenter;
+                labelStyle.fontSize = 30;
+                GUI.Label(new Rect(Screen.width / 2 - 150, Screen.height / 2 - 100, 300, 200), "Puzzle Complete", labelStyle);
+            }
         }
 
         private void CreateFlows()
@@ -74,7 +79,6 @@ namespace NetworkBypass
 
             flow.FirstNode = first;
             flow.SecondNode = second;
-//			first.OutputUp.networkFlow = flow;
         }
 
         private NetworkFlow CreateFlow(Vector3 from, Vector3 to)
@@ -98,6 +102,17 @@ namespace NetworkBypass
             }
         }
         
+        private void RegisterEvents(NetworkNode node)
+        {
+            node.OnClick += OnNodeClick;
+            node.OnFocus += OnNodeFocus;
+            node.OnDataChanged += OnNodeDataChanged;
+            if (node is EndNode)
+            {
+                (node as EndNode).OnPuzzleComplete += OnPuzzleComplete;
+            }
+        }
+        
         private IEnumerator UpdateNetwork()
         {
             if (startNode == null) yield break;
@@ -118,7 +133,10 @@ namespace NetworkBypass
                     var direction = (NetworkNode.Direction) i;
                     var neighbor = node.GetNeighbor(direction);
 
-                    if (neighbor == null || visited.ContainsKey(neighbor))
+                    if (neighbor == null)
+                        continue;
+                    // 特例：结束（带锁）节点是可以被重复访问的
+                    if (visited.ContainsKey(neighbor) && !(neighbor is EndNode))
                         continue;
                     var flow = node.GetFlow(direction);
                     if (node.IsReachableTo(direction))
@@ -138,20 +156,31 @@ namespace NetworkBypass
 
         private void VisitNode(NetworkNode node)
         {
-            visited.Add(node, true);
+            if (!visited.ContainsKey(node))
+                visited.Add(node, true);
             queue.Enqueue(node);
         }
 
-        private void OnNodeClick(object obj, EventArgs e)
+        private void OnNodeClick(NetworkNode node)
         {
-            NetworkNode node = obj as NetworkNode;
             debugGUIText = "Click " + node.name;
             node.Execute();
         }
+        
+        private void OnNodeFocus(NetworkNode node)
+        {
+            debugGUIText = node != null ? 
+                "Hover " + node.name : string.Empty;
+        }
 
-        private void OnNodeDataChanged(object obj, EventArgs e)
+        private void OnNodeDataChanged(NetworkNode node)
         {
             TraverseNetwork();
+        }
+
+        private void OnPuzzleComplete()
+        {
+            isPuzzleComplete = true;
         }
     }
 }

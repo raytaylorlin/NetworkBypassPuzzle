@@ -15,9 +15,9 @@ namespace NetworkBypass
             Unknown = -1
         }
 
-        public event EventHandler OnFocus;
-        public event EventHandler OnClick;
-        public event EventHandler OnDataChanged;
+        public event Action<NetworkNode> OnFocus;
+        public event Action<NetworkNode> OnClick;
+        public event Action<NetworkNode> OnDataChanged;
 
         [HideInInspector] public NetworkNode[] Neighbors = {null, null, null, null};
         [HideInInspector] public NetworkFlow[] Flows = {null, null, null, null};
@@ -47,17 +47,17 @@ namespace NetworkBypass
         
         void OnMouseDown()
         {
-            OnClick(this, null);
+            OnClick(this);
         }
 
         void OnMouseEnter()
         {
-            OnFocus(this, null);
+            OnFocus(this);
         }
 
         void OnMouseExit()
         {
-            OnFocus(null, null);
+            OnFocus(null);
         }
         
         #endregion
@@ -85,7 +85,7 @@ namespace NetworkBypass
 
         protected void NotifyDataChanged()
         {
-            OnDataChanged(this, null);
+            OnDataChanged(this);
         }
 
         public NetworkNode GetNeighbor(Direction direction)

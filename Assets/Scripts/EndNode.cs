@@ -7,6 +7,8 @@ namespace NetworkBypass
 {
     public class EndNode : NetworkNode
     {
+        public event Action OnPuzzleComplete;
+        
         [HideInInspector] public bool[] InputLockSetting = {false, false, false, false};
 
         public SpriteRenderer[] LockSprites = new SpriteRenderer[NeighborNum];
@@ -52,7 +54,7 @@ namespace NetworkBypass
             base.Execute();
             if (allUnlocked)
             {
-                Debug.Log("Puzzle Complete!!!");
+                OnPuzzleComplete();
             }
         }
     }
