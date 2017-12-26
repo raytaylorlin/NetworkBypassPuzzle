@@ -51,7 +51,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4198889167571586}
-  - component: {fileID: 114006119219308376}
+  - component: {fileID: 114530558304270908}
   m_Layer: 0
   m_Name: CrossConnectionNode
   m_TagString: Untagged
@@ -100,7 +100,7 @@ Transform:
   m_Father: {fileID: 4198889167571586}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114006119219308376
+--- !u!114 &114530558304270908
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1997462578199258}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0a56e6d0814b214596732e70204b8f2, type: 3}
+  m_Script: {fileID: 11500000, guid: a3b8073d3c3d0a742b6d75c7aaa11c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Neighbors:
