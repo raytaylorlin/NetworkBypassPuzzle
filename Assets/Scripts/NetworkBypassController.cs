@@ -141,6 +141,10 @@ namespace NetworkBypass
             while (queue.Count > 0)
             {
                 NetworkNode node = queue.Dequeue();
+                // 不允许从结束节点访问邻居节点
+                if (node is EndNode)
+                    continue;
+                
                 for (int i = 0; i < NetworkNode.NeighborNum; i++)
                 {
                     var direction = (NetworkNode.Direction) i;
