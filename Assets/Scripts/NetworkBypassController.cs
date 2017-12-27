@@ -193,6 +193,7 @@ namespace NetworkBypass
 
         private void OnNodeDataChanged(NetworkNode node)
         {
+            isPuzzleComplete = false;
             TraverseNetwork();
         }
 

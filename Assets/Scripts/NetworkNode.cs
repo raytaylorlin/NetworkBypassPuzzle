@@ -41,7 +41,8 @@ namespace NetworkBypass
         
         private void CreateCollider()
         {
-            if (this is TransitionNode)
+            // 某些节点不可交互，不需要碰撞体
+            if (this is TransitionNode || this is StartNode)
                 return;
             SphereCollider collider = gameObject.AddComponent<SphereCollider>();
             collider.radius = 0.5f;
@@ -144,7 +145,6 @@ namespace NetworkBypass
         {
             int i = (int) direction;
             return Outputs[i] && GetNeighbor(i) != null;
-//			return OutputUp != null && OutputUp.IsActive && Up != null;
         }
 
         public bool HasInputFrom(Direction direction)
