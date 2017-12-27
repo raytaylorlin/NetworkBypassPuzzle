@@ -41,6 +41,8 @@ namespace NetworkBypass
         
         private void CreateCollider()
         {
+            if (this is TransitionNode)
+                return;
             SphereCollider collider = gameObject.AddComponent<SphereCollider>();
             collider.radius = 0.5f;
         }
@@ -151,6 +153,15 @@ namespace NetworkBypass
             return Inputs[i];
         }
 
+        public bool HasInput
+        {
+            get
+            {
+                return HasInputFrom(Direction.Up) || HasInputFrom(Direction.Right)||
+                       HasInputFrom(Direction.Down) || HasInputFrom(Direction.Left);
+            }
+        }
+
         public void SetOutput(Direction direction, bool flag)
         {
             int i = (int) direction;
@@ -173,8 +184,10 @@ namespace NetworkBypass
             return (Direction) ((index + 2) % 4);
         }
         
-        public static Vector3 GetDrawLineOffset(Direction direction)
+        public static Vector3 GetDrawLineOffset(NetworkNode node, Direction direction)
         {
+            if (node is TransitionNode) return Vector3.zero;
+            
             if (direction == Direction.Up) return verticalOffset;
             if (direction == Direction.Right) return horizontalOffset;
             if (direction == Direction.Down) return -verticalOffset;

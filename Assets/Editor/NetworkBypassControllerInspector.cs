@@ -24,6 +24,7 @@ namespace NetworkBypass.Editor
 			prefabDict.Add("RightAngle Connection", "RightAngleConnectionNode");
 			prefabDict.Add("T Connection", "TConnectionNode");
 			prefabDict.Add("Cross Connection", "CrossConnectionNode");
+			prefabDict.Add("Transition", "TransitionNode");
 
 			var keys = prefabDict.Keys;
 			popupKeys = new string[keys.Count];

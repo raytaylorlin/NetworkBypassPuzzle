@@ -23,7 +23,7 @@ namespace NetworkBypass.Editor
             self = target as NetworkNode;
         }
 
-        protected virtual void OnSceneGUI()
+        protected void OnSceneGUI()
         {
             if (Application.isPlaying)
             {
@@ -32,15 +32,22 @@ namespace NetworkBypass.Editor
             
             if (Event.current.type == EventType.Repaint)
             {
-                for (int i = 0; i < NetworkNode.NeighborNum; i++)
+                DrawSceneGUI();
+            }
+        }
+
+        protected virtual void DrawSceneGUI()
+        {
+            for (int i = 0; i < NetworkNode.NeighborNum; i++)
+            {
+                var neighbor = self.Neighbors[i];
+                if (neighbor != null)
                 {
-                    var neighbor = self.Neighbors[i];
-                    if (neighbor != null)
-                    {
-                        Vector3 offset = NetworkNode.GetDrawLineOffset((NetworkNode.Direction) i);
-                        Handles.DrawLine(self.transform.localPosition + offset,
-                            neighbor.transform.localPosition - offset);
-                    }
+                    NetworkNode.Direction direction = (NetworkNode.Direction) i;
+                    Vector3 offset1 = NetworkNode.GetDrawLineOffset(self, direction);
+                    Vector3 offset2 = NetworkNode.GetDrawLineOffset(neighbor, direction);
+                    Handles.DrawLine(self.transform.localPosition + offset1,
+                        neighbor.transform.localPosition - offset2);
                 }
             }
         }

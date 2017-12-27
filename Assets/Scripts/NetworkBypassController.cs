@@ -84,9 +84,10 @@ namespace NetworkBypass
 
         private void CreateFlowBetween(NetworkNode first, NetworkNode second, NetworkNode.Direction direction)
         {
-            Vector3 offset = NetworkNode.GetDrawLineOffset(direction);
-            NetworkFlow flow = CreateFlow(first.transform.localPosition + offset,
-                second.transform.localPosition - offset);
+            Vector3 offset1 = NetworkNode.GetDrawLineOffset(first, direction);
+            Vector3 offset2 = NetworkNode.GetDrawLineOffset(second, direction);
+            NetworkFlow flow = CreateFlow(first.transform.localPosition + offset1,
+                second.transform.localPosition - offset2);
             first.SetFlow(direction, flow);
             second.SetFlow(NetworkNode.GetOppositeDirection(direction), flow);
 
@@ -151,6 +152,7 @@ namespace NetworkBypass
                     if (visited.ContainsKey(neighbor) && !(neighbor is EndNode))
                         continue;
                     var flow = node.GetFlow(direction);
+                    // 激活或反激活邻居节点的输入
                     if (node.IsReachableTo(direction))
                     {
                         flow.Activate();
