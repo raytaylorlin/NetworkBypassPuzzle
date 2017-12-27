@@ -98,7 +98,6 @@ namespace NetworkBypass
         {
             GameObject flowGo = Instantiate(NetworkFlowPrefab, NetworkFlows);
             LineRenderer lineRenderer = flowGo.GetComponent<LineRenderer>();
-            lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
             lineRenderer.SetPositions(new Vector3[] {from, to});
             return flowGo.GetComponent<NetworkFlow>();
         }

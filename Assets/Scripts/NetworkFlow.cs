@@ -22,12 +22,14 @@ namespace NetworkBypass
         {
             IsActive = true;
             lineRenderer.startColor = lineRenderer.endColor = NetworkBypassController.ActiveColor;
+            lineRenderer.material.color = NetworkBypassController.ActiveColor;
         }
     
         public void Deactivate()
         {
             IsActive = false;
             lineRenderer.startColor = lineRenderer.endColor = NetworkBypassController.DeactiveColor;
+            lineRenderer.material.color = NetworkBypassController.DeactiveColor;
         }
     }   
 }

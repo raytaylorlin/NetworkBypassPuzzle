@@ -127,7 +127,6 @@ namespace NetworkBypass.Editor
                 EditorUtility.SetDirty(newValue);
                 EditorUtility.SetDirty(self);
             }
-            
         }
 
         private NetworkNode.Direction FindRepeatNodeDirection(NetworkNode newValue, NetworkNode.Direction direction)
