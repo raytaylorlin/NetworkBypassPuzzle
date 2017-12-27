@@ -7,6 +7,8 @@ namespace NetworkBypass
 {
     public abstract class ConnectionNode : NetworkNode
     {
+        private const float tweenDuration = 0.3f;
+        
         public enum ERotateState
         {
             Up = 0,
@@ -40,7 +42,11 @@ namespace NetworkBypass
 
         private void ResetSprite()
         {
-            Sprite.transform.eulerAngles = new Vector3(0, 0, -90 * (int) RotateState);
+            float to = -90 * (int) RotateState;
+//            Sprite.transform.eulerAngles = new Vector3(0, 0, to);
+            TweenRotation tweenRotation = TweenRotation.Begin(Sprite.gameObject, tweenDuration, Quaternion.Euler(0, 0, to));
+            tweenRotation.quaternionLerp = true;
+            tweenRotation.animationCurve = AnimationCurve.EaseInOut(0, 0, tweenDuration, 1f);
         }
         
         public override void SetInput(Direction from, bool isActive)
