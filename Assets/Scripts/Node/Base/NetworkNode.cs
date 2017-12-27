@@ -4,7 +4,7 @@ using UnityEngine;
 namespace NetworkBypass
 {
     [DisallowMultipleComponent]
-    public class NetworkNode : MonoBehaviour
+    public abstract class NetworkNode : MonoBehaviour
     {
         public enum Direction
         {
