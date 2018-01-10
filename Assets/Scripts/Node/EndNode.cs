@@ -8,51 +8,29 @@ namespace NetworkBypass
     public class EndNode : NetworkNode
     {
         public event Action OnPuzzleComplete;
-        
-        [HideInInspector] public bool[] InputLockSetting = {false, false, false, false};
 
-        public SpriteRenderer[] LockSprites = new SpriteRenderer[NeighborNum];
-
-        private bool allUnlocked = false;
-
+        private bool isAllUnlocked = false;
+            
         protected override void Init()
         {
             base.Init();
-            for (int i = 0; i < NeighborNum; i++)
+//            lockDecorator.OnLockChanged += OnLockChanged;
+            if (networkNodeLock != null)
             {
-                LockSprites[i].gameObject.SetActive(InputLockSetting[i]);
+                networkNodeLock.OnCheckAllLock += OnCheckAllNetworkNodeLock;
             }
         }
 
-        public override void SetInput(Direction from, bool isActive)
+        private void OnCheckAllNetworkNodeLock(bool allUnLocked)
         {
-            base.SetInput(from, isActive);
-            int i = (int) from;
-            if (InputLockSetting[i])
-            {
-                SetSpriteActiveColor(LockSprites[i], isActive);
-            }
-            CheckLocks();
-        }
-
-        private void CheckLocks()
-        {
-            allUnlocked = true;
-            for (int i = 0; i < NeighborNum; i++)
-            {
-                if (InputLockSetting[i] && !Inputs[i])
-                {
-                    allUnlocked = false;
-                    break;
-                }
-            }
-            SetActive(allUnlocked);
+            isAllUnlocked = allUnLocked;
+            SetActive(allUnLocked);
         }
 
         public override void Execute()
         {
             base.Execute();
-            if (allUnlocked)
+            if (isAllUnlocked && OnPuzzleComplete != null)
             {
                 OnPuzzleComplete();
             }

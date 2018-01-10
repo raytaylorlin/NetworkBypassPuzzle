@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 
@@ -220,35 +221,6 @@ namespace NetworkBypass.Editor
     [CustomEditor(typeof(EndNode), true)]
     public class EndNodeInspector : NetworkNodeInspector
     {
-        protected override void DrawFields()
-        {
-            EndNode node = target as EndNode;
-            
-            base.DrawFields();
-            bool hasInputLock = false;
-            EditorGUILayout.BeginHorizontal();
-            {
-                EditorGUILayout.LabelField("Input Lock", GUILayout.MaxWidth(120f));
-                GUILayoutOption[] option = {
-                    GUILayout.MaxWidth(80f), GUILayout.MinWidth(40f)};
-                for (int i = 0; i < NetworkNode.NeighborNum; i++)
-                {
-                    node.InputLockSetting[i] = EditorGUILayout.ToggleLeft(
-                        directionString[i], node.InputLockSetting[i], option);
-                    if (node.InputLockSetting[i]) 
-                        hasInputLock = true;
-                }
-            }
-            EditorGUILayout.EndHorizontal();
-
-            if (!hasInputLock)
-            {
-                ShowTips("结束节点需要至少一个输入锁", MessageType.Error);
-            }
-            else
-            {
-                ClearTips();
-            }
-        }
+        
     }
 }

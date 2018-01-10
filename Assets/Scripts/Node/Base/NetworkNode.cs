@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace NetworkBypass
@@ -26,6 +27,10 @@ namespace NetworkBypass
         
         public SpriteRenderer Sprite;
 
+        // 组件
+        protected NetworkNodeLock networkNodeLock;
+//        [HideInInspector] public List<NetworkNodeComponent> Components = new List<NetworkNodeComponent>();
+
         public const int NeighborNum = 4;
         
         private static Vector3 horizontalOffset = new Vector3(0.45f, 0, 0);
@@ -35,7 +40,10 @@ namespace NetworkBypass
         
         void Start()
         {
-            CreateCollider();
+            if (Application.isPlaying)
+            {
+                CreateCollider();
+            }
             Init();	
         }
         
@@ -43,9 +51,15 @@ namespace NetworkBypass
         {
             // 某些节点不可交互，不需要碰撞体
             if (this is TransitionNode || this is StartNode)
+            {
                 return;
-            SphereCollider collider = gameObject.AddComponent<SphereCollider>();
-            collider.radius = 0.5f;
+            }
+            SphereCollider sphereCollider = GetComponent<SphereCollider>();
+            if (sphereCollider == null)
+            {
+                sphereCollider = gameObject.AddComponent<SphereCollider>();
+            }
+            sphereCollider.radius = 0.5f;
         }
         
         void OnMouseDown()
@@ -62,6 +76,11 @@ namespace NetworkBypass
         {
             OnFocus(null);
         }
+
+        void OnDestroy()
+        {
+            Dispose();
+        }
         
         #endregion
         
@@ -69,7 +88,16 @@ namespace NetworkBypass
 
         protected virtual void Init()
         {
+            networkNodeLock = GetComponent<NetworkNodeLock>();
+            if (networkNodeLock != null)
+            {
+                networkNodeLock.OnInit(this);
+            }
+        }
 
+        protected virtual void Dispose()
+        {
+            
         }
 
         public virtual void ActivateInput(Direction from)
@@ -86,6 +114,10 @@ namespace NetworkBypass
         {
             int i = (int) from;
             Inputs[i] = isActive;
+            if (networkNodeLock != null)
+            {
+                networkNodeLock.OnInput(from, isActive);
+            }
         }
 
         protected virtual void SetActive(bool isActive)
@@ -99,7 +131,10 @@ namespace NetworkBypass
 
         protected void NotifyDataChanged()
         {
-            OnDataChanged(this);
+            if (OnDataChanged != null)
+            {
+                OnDataChanged(this);
+            }
         }
 
         public NetworkNode GetNeighbor(Direction direction)
@@ -168,7 +203,7 @@ namespace NetworkBypass
             Outputs[i] = flag;
         }
 
-        protected void SetSpriteActiveColor(SpriteRenderer sprite, bool isActive)
+        public static void SetSpriteActiveColor(SpriteRenderer sprite, bool isActive)
         {
             if (sprite != null)
                 sprite.color = isActive ? NetworkBypassController.ActiveColor : NetworkBypassController.DeactiveColor;
