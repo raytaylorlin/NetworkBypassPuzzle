@@ -29,8 +29,16 @@ namespace NetworkBypass
         public override void Execute()
         {
             base.Execute();
-            Rotate();
-            NotifyDataChanged();
+            if (networkNodeLock != null && networkNodeLock.IsUnlocked)
+            {
+                networkNodeLock.ExecuteUnlock();
+                networkNodeLock = null;
+            }
+            else
+            {
+                Rotate();
+                NotifyDataChanged();
+            }
         }
         
         private void Rotate()
@@ -60,10 +68,15 @@ namespace NetworkBypass
             
         }
         
-        protected override void SetActive(bool isActive)
+        public override void SetActive(bool isActive)
         {
             base.SetActive(isActive);
-            SetSpriteActiveColor(BackgroundSprite, isActive);
+            SetSpriteActiveColor(Sprite, isActive);
+        }
+
+        public override SpriteRenderer MainSprite
+        {
+            get { return BackgroundSprite; }
         }
     }
 }

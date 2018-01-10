@@ -120,11 +120,16 @@ namespace NetworkBypass
             }
         }
 
-        protected virtual void SetActive(bool isActive)
+        public virtual void SetActive(bool isActive)
         {
-            SetSpriteActiveColor(Sprite, isActive);
+            SetSpriteActiveColor(MainSprite, isActive);
         }
-        
+
+        public virtual SpriteRenderer MainSprite
+        {
+            get { return Sprite; }
+        }
+
         #endregion
         
         #region 工具方法

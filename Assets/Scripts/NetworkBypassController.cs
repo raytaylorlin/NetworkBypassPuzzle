@@ -18,7 +18,8 @@ namespace NetworkBypass
 
         private List<NetworkNode> activeList;
         private StartNode startNode;
-        private Dictionary<NetworkNode, bool> visited = new Dictionary<NetworkNode, bool>();
+        private Dictionary<NetworkNode, bool> visitedNode = new Dictionary<NetworkNode, bool>();
+        private Dictionary<NetworkFlow, bool> visitedFlow = new Dictionary<NetworkFlow, bool>();
         private Queue<NetworkNode> queue = new Queue<NetworkNode>();
         private bool isPuzzleComplete = false;
         private string debugGUIText;
@@ -135,7 +136,8 @@ namespace NetworkBypass
 
         private void TraverseNetwork()
         {
-            visited.Clear();
+            visitedNode.Clear();
+            visitedFlow.Clear();
             // 广度优先遍历
             VisitNode(startNode);
             while (queue.Count > 0)
@@ -152,10 +154,13 @@ namespace NetworkBypass
 
                     if (neighbor == null)
                         continue;
-                    // 特例：结束（带锁）节点是可以被重复访问的
-                    if (visited.ContainsKey(neighbor) && !(neighbor is EndNode))
-                        continue;
                     var flow = node.GetFlow(direction);
+                    // 特例：结束（带锁）节点是可以被重复访问的
+                    if (visitedNode.ContainsKey(neighbor) &&
+                        visitedFlow.ContainsKey(flow) && visitedFlow[flow] &&
+                        !(neighbor is EndNode))
+                        continue;
+
                     // 激活或反激活邻居节点的输入
                     if (node.IsReachableTo(direction))
                     {
@@ -168,15 +173,28 @@ namespace NetworkBypass
                         neighbor.SetInput(NetworkNode.GetOppositeDirection(direction), false);
                     }
                     VisitNode(neighbor);
+                    VisitFlow(flow);
                 }
             }
         }
 
         private void VisitNode(NetworkNode node)
         {
-            if (!visited.ContainsKey(node))
-                visited.Add(node, true);
+            if (!visitedNode.ContainsKey(node))
+                visitedNode.Add(node, true);
             queue.Enqueue(node);
+        }
+
+        private void VisitFlow(NetworkFlow flow)
+        {
+            if (!visitedFlow.ContainsKey(flow))
+            {
+                visitedFlow.Add(flow, false);
+            }
+            else
+            {
+                visitedFlow[flow] = true;
+            }
         }
 
         private void OnNodeClick(NetworkNode node)

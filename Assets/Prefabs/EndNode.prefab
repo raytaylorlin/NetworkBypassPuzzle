@@ -257,10 +257,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   InputLockSetting: 01000000
   InputLockSprites:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 212293965317662896}
+  - {fileID: 212038339880176730}
+  - {fileID: 212852416271552900}
+  - {fileID: 212642778374012174}
   LockBackgroundSprite: {fileID: 0}
 --- !u!212 &212038339880176730
 SpriteRenderer:
