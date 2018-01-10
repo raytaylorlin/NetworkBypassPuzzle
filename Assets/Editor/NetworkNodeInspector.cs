@@ -218,9 +218,38 @@ namespace NetworkBypass.Editor
         }
     }
     
-    [CustomEditor(typeof(EndNode), true)]
-    public class EndNodeInspector : NetworkNodeInspector
+    [CustomEditor(typeof(ConnectionNode), true)]
+    public class ConnectionNodeInspector : NetworkNodeInspector
     {
-        
+        protected override void DrawFields()
+        {
+            ConnectionNode node = target as ConnectionNode;
+            
+            base.DrawFields();
+
+            NetworkNodeLock lockComp = node.GetComponent<NetworkNodeLock>();
+            if (lockComp != null)
+            {
+                GUI.enabled = false;   
+            }
+            if (GUILayout.Button("Add lock"))
+            {
+                lockComp = node.gameObject.AddComponent<NetworkNodeLock>();
+                GameObject lockGroup = Instantiate(
+                    AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/LockSpriteGroup.prefab"),
+                    node.transform);
+//                lockGroup.transform.SetParent(node.transform);
+                SpriteRenderer[] sprites = lockGroup.GetComponentsInChildren<SpriteRenderer>();
+                for (int i = 0; i < NetworkNode.NeighborNum; i++)
+                {
+                    lockComp.InputLockSprites[i] = sprites[i];
+                }
+                if (sprites.Length > NetworkNode.NeighborNum)
+                {
+                    lockComp.LockBackgroundSprite = sprites[sprites.Length - 1];
+                }
+            }
+            GUI.enabled = true;
+        }
     }
 }

@@ -11,7 +11,8 @@ namespace NetworkBypass
 		public event Action<bool> OnCheckAllLock;
 		
 		[HideInInspector] public bool[] InputLockSetting = {false, false, false, false};
-		public SpriteRenderer[] LockSprites = new SpriteRenderer[NetworkNode.NeighborNum];
+		public SpriteRenderer[] InputLockSprites = new SpriteRenderer[NetworkNode.NeighborNum];
+		public SpriteRenderer LockBackgroundSprite;
 		
 		private bool allUnlocked = false;
 
@@ -20,7 +21,7 @@ namespace NetworkBypass
 			base.OnInit(node);
 			for (int i = 0; i < NetworkNode.NeighborNum; i++)
 			{
-				LockSprites[i].gameObject.SetActive(InputLockSetting[i]);
+				InputLockSprites[i].gameObject.SetActive(InputLockSetting[i]);
 			}
 		}
 		
@@ -31,7 +32,7 @@ namespace NetworkBypass
 			if (InputLockSetting[i])
 			{
 //				OnLockChanged(from, isActive);
-				NetworkNode.SetSpriteActiveColor(LockSprites[i], isActive);
+				NetworkNode.SetSpriteActiveColor(InputLockSprites[i], isActive);
 			}
 			CheckLocks();
 		}
