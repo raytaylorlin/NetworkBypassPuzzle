@@ -734,6 +734,20 @@ Prefab:
       propertyPath: Neighbors.Array.data[1]
       value: 
       objectReference: {fileID: 520916220}
+    - target: {fileID: 114954622173929068, guid: ec862ffbbb173d740a567fe1754deeed,
+        type: 2}
+      propertyPath: InputLockSetting.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114954622173929068, guid: ec862ffbbb173d740a567fe1754deeed,
+        type: 2}
+      propertyPath: InputLockSetting.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1108395691155242, guid: ec862ffbbb173d740a567fe1754deeed, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ec862ffbbb173d740a567fe1754deeed, type: 2}
   m_IsPrefabParent: 0

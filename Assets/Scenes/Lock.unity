@@ -1154,6 +1154,11 @@ Prefab:
       propertyPath: Neighbors.Array.data[2]
       value: 
       objectReference: {fileID: 489079817}
+    - target: {fileID: 114545096638731706, guid: 58ac17361b24b784795ff5ff37115642,
+        type: 2}
+      propertyPath: RotateState
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 58ac17361b24b784795ff5ff37115642, type: 2}
   m_IsPrefabParent: 0
@@ -1168,6 +1173,12 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 759275622}
   m_Script: {fileID: 11500000, guid: c0a56e6d0814b214596732e70204b8f2, type: 3}
+--- !u!114 &802547564 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114419866235006548, guid: ec862ffbbb173d740a567fe1754deeed,
+    type: 2}
+  m_PrefabInternal: {fileID: 1787539999}
+  m_Script: {fileID: 11500000, guid: dae17143eb518ea469aa9edec4de8c0d, type: 3}
 --- !u!1 &827269829
 GameObject:
   m_ObjectHideFlags: 0
@@ -1691,6 +1702,12 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
+--- !u!114 &1178130168 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114246583757804164, guid: 167e9bb1a92d3cc489dac5c55e0bec2a,
+    type: 2}
+  m_PrefabInternal: {fileID: 1236442322}
+  m_Script: {fileID: 11500000, guid: ca3656fef30d548438b203d1073b29ac, type: 3}
 --- !u!1 &1183007666
 GameObject:
   m_ObjectHideFlags: 0
@@ -1815,6 +1832,16 @@ Prefab:
       propertyPath: m_Name
       value: TransitionNode (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 114246583757804164, guid: 167e9bb1a92d3cc489dac5c55e0bec2a,
+        type: 2}
+      propertyPath: Neighbors.Array.data[2]
+      value: 
+      objectReference: {fileID: 1953324639}
+    - target: {fileID: 114246583757804164, guid: 167e9bb1a92d3cc489dac5c55e0bec2a,
+        type: 2}
+      propertyPath: Neighbors.Array.data[1]
+      value: 
+      objectReference: {fileID: 1418517319}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 167e9bb1a92d3cc489dac5c55e0bec2a, type: 2}
   m_IsPrefabParent: 0
@@ -2001,7 +2028,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1177163524997576, guid: 167e9bb1a92d3cc489dac5c55e0bec2a, type: 2}
       propertyPath: m_Name
-      value: TransitionNode (2)
+      value: TransitionNode (2) aaaaaa
       objectReference: {fileID: 0}
     - target: {fileID: 114246583757804164, guid: 167e9bb1a92d3cc489dac5c55e0bec2a,
         type: 2}
@@ -2013,6 +2040,11 @@ Prefab:
       propertyPath: Neighbors.Array.data[3]
       value: 
       objectReference: {fileID: 1953324639}
+    - target: {fileID: 114246583757804164, guid: 167e9bb1a92d3cc489dac5c55e0bec2a,
+        type: 2}
+      propertyPath: Neighbors.Array.data[0]
+      value: 
+      objectReference: {fileID: 802547564}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 167e9bb1a92d3cc489dac5c55e0bec2a, type: 2}
   m_IsPrefabParent: 0
@@ -2138,6 +2170,16 @@ Prefab:
       propertyPath: RotateState
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114399991054160640, guid: 4658f181a7cb5eb4e979d8c288b2bb40,
+        type: 2}
+      propertyPath: Neighbors.Array.data[3]
+      value: 
+      objectReference: {fileID: 1178130168}
+    - target: {fileID: 114399991054160640, guid: 4658f181a7cb5eb4e979d8c288b2bb40,
+        type: 2}
+      propertyPath: Neighbors.Array.data[1]
+      value: 
+      objectReference: {fileID: 802547564}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4658f181a7cb5eb4e979d8c288b2bb40, type: 2}
   m_IsPrefabParent: 0
@@ -2162,13 +2204,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f122f30d67a4a0240beb9586fadd82fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InputLockSetting: 00000000
+  InputLockSetting: 00000001
   InputLockSprites:
   - {fileID: 904080043}
   - {fileID: 1036538656}
   - {fileID: 592012937}
   - {fileID: 453023054}
   LockBackgroundSprite: {fileID: 1175045461}
+--- !u!114 &1418517319 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114399991054160640, guid: 4658f181a7cb5eb4e979d8c288b2bb40,
+    type: 2}
+  m_PrefabInternal: {fileID: 1418517315}
+  m_Script: {fileID: 11500000, guid: 9c8cc4c64eb69094fadf9672d697308c, type: 3}
 --- !u!1001 &1431164494
 Prefab:
   m_ObjectHideFlags: 0
@@ -2391,7 +2439,7 @@ Prefab:
         type: 2}
       propertyPath: Neighbors.Array.data[3]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1418517319}
     - target: {fileID: 114419866235006548, guid: ec862ffbbb173d740a567fe1754deeed,
         type: 2}
       propertyPath: InputLockSetting.Array.data[1]
@@ -2401,6 +2449,31 @@ Prefab:
         type: 2}
       propertyPath: Neighbors.Array.data[1]
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114419866235006548, guid: ec862ffbbb173d740a567fe1754deeed,
+        type: 2}
+      propertyPath: Neighbors.Array.data[2]
+      value: 
+      objectReference: {fileID: 1367099877}
+    - target: {fileID: 114954622173929068, guid: ec862ffbbb173d740a567fe1754deeed,
+        type: 2}
+      propertyPath: InputLockSetting.Array.data[0]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114954622173929068, guid: ec862ffbbb173d740a567fe1754deeed,
+        type: 2}
+      propertyPath: InputLockSetting.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114954622173929068, guid: ec862ffbbb173d740a567fe1754deeed,
+        type: 2}
+      propertyPath: InputLockSetting.Array.data[1]
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114954622173929068, guid: ec862ffbbb173d740a567fe1754deeed,
+        type: 2}
+      propertyPath: InputLockSetting.Array.data[2]
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ec862ffbbb173d740a567fe1754deeed, type: 2}
@@ -2664,6 +2737,11 @@ Prefab:
       propertyPath: Neighbors.Array.data[1]
       value: 
       objectReference: {fileID: 1367099877}
+    - target: {fileID: 114650479340551806, guid: 8c87d6789d5fe1b4da2a213aa6d6f3c7,
+        type: 2}
+      propertyPath: Neighbors.Array.data[0]
+      value: 
+      objectReference: {fileID: 1178130168}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8c87d6789d5fe1b4da2a213aa6d6f3c7, type: 2}
   m_IsPrefabParent: 0
@@ -2844,6 +2922,11 @@ Prefab:
       propertyPath: Neighbors.Array.data[2]
       value: 
       objectReference: {fileID: 1431164496}
+    - target: {fileID: 114650479340551806, guid: 8c87d6789d5fe1b4da2a213aa6d6f3c7,
+        type: 2}
+      propertyPath: RotateState
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8c87d6789d5fe1b4da2a213aa6d6f3c7, type: 2}
   m_IsPrefabParent: 0
