@@ -19,7 +19,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4547791585912868}
-  - component: {fileID: 114674015179153410}
   - component: {fileID: 120539236243623050}
   m_Layer: 0
   m_Name: NetworkFlow
@@ -41,20 +40,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114674015179153410
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1849783246300702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1127c8b9ffa9e124ba3afe550936c4c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FirstNode: {fileID: 0}
-  SecondNode: {fileID: 0}
-  IsActive: 0
 --- !u!120 &120539236243623050
 LineRenderer:
   m_ObjectHideFlags: 1

@@ -33,6 +33,7 @@ namespace NetworkBypass
             {
                 networkNodeLock.ExecuteUnlock();
                 networkNodeLock = null;
+                NotifyDataChanged();
             }
             else
             {

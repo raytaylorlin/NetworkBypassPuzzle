@@ -181,10 +181,38 @@ namespace NetworkBypass
             Flows[(int) direction] = value;
         }
 
+        public Direction GetNeighborDirection(NetworkNode neighbor)
+        {
+            for (int i = 0; i < NeighborNum; i++)
+            {
+                if (GetNeighbor(i) == neighbor)
+                {
+                    return (Direction) i;
+                }
+            }
+            throw new Exception("is not neighbor");
+        }
+
         public bool IsReachableTo(Direction direction)
         {
+            if (networkNodeLock != null)
+            {
+                return false;
+            }
+            
             int i = (int) direction;
             return Outputs[i] && GetNeighbor(i) != null;
+        }
+        
+        public bool IsReachableTo(NetworkNode neighbor)
+        {
+            if (networkNodeLock != null)
+            {
+                return false;
+            }
+
+            int direction = (int) GetNeighborDirection(neighbor);
+            return Outputs[direction];
         }
 
         public bool HasInputFrom(Direction direction)
@@ -206,6 +234,21 @@ namespace NetworkBypass
         {
             int i = (int) direction;
             Outputs[i] = flag;
+        }
+
+        public void Clear()
+        {
+            for (int i = 0; i < NeighborNum; i++)
+            {
+                Inputs[i] = false;
+                Outputs[i] = false;
+            }
+
+            if (networkNodeLock != null)
+            {
+                networkNodeLock.OnClear();
+            }
+            SetActive(false);
         }
 
         public static void SetSpriteActiveColor(SpriteRenderer sprite, bool isActive)
