@@ -296,10 +296,11 @@ namespace NetworkBypass
         {
             if (node is TransitionNode) return Vector3.zero;
             
-            if (direction == Direction.Up) return verticalOffset;
-            if (direction == Direction.Right) return horizontalOffset;
-            if (direction == Direction.Down) return -verticalOffset;
-            if (direction == Direction.Left) return -horizontalOffset;
+            // 用自身的quaternion去乘，以修正3D中节点被旋转的情况
+            if (direction == Direction.Up) return node.transform.localRotation * verticalOffset;
+            if (direction == Direction.Right) return  node.transform.localRotation * horizontalOffset;
+            if (direction == Direction.Down) return node.transform.localRotation * -verticalOffset;
+            if (direction == Direction.Left) return node.transform.localRotation * -horizontalOffset;
             return Vector3.zero;
         }
         
