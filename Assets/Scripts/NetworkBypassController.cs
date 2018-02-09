@@ -36,6 +36,7 @@ namespace NetworkBypass
             InitSettings();
             CreateFlows();
             InitNodes();
+            InitCamera();
         }
         
         void Start()
@@ -139,6 +140,15 @@ namespace NetworkBypass
             if (node is EndNode)
             {
                 (node as EndNode).OnPuzzleComplete += OnPuzzleComplete;
+            }
+        }
+
+        private void InitCamera()
+        {
+            var comp = Camera.main.GetComponent<NetworkBypassCamera>();
+            if (comp == null)
+            {
+                Camera.main.gameObject.AddComponent<NetworkBypassCamera>();
             }
         }
         
@@ -346,7 +356,7 @@ namespace NetworkBypass
 
         private static void Log(string log)
         {
-            Debug.Log(log);
+//            Debug.Log(log);
         }
     }
 }

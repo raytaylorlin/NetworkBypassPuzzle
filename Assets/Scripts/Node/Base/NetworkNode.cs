@@ -59,29 +59,54 @@ namespace NetworkBypass
             {
                 sphereCollider = gameObject.AddComponent<SphereCollider>();
             }
-            sphereCollider.radius = 0.5f;
+            sphereCollider.radius = 0.6f;
         }
         
-        void OnMouseDown()
-        {
-            OnClick(this);
-        }
-
-        void OnMouseEnter()
-        {
-            OnFocus(this);
-        }
-
-        void OnMouseExit()
-        {
-            OnFocus(null);
-        }
+//        void OnMouseDown()
+//        {
+//            OnClick(this);
+//        }
+//
+//        void OnMouseEnter()
+//        {
+//            OnFocus(this);
+//        }
+//
+//        void OnMouseExit()
+//        {
+//            OnFocus(null);
+//        }
 
         void OnDestroy()
         {
             Dispose();
         }
         
+        #endregion
+        
+        #region 事件
+
+        // Trigger from NetworkBypassCamera
+        public void OnCameraHover(object p)
+        {
+            bool isHover = (bool) p;
+            if (OnFocus != null)
+            {
+                if (isHover)
+                    OnFocus(this);
+                else
+                    OnFocus(null);
+            }
+        }
+        
+        // Trigger from NetworkBypassCamera
+        public void OnCameraClick()
+        {
+            if (OnClick != null)
+            {
+                OnClick(this);
+            }
+        }
         #endregion
         
         #region 虚方法
