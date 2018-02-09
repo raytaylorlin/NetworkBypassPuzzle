@@ -116,11 +116,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  Flows:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   Outputs: 00000000
   Inputs: 00000000
   Sprite: {fileID: 212171747876998868}
